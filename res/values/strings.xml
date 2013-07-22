@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WillowTweet App</string>
+    <string name="action_settings">Settings</string>
+    
+    
+    <string name="tweets"> TWEETS</string>
+    
+    
+    <!-- warnings -->
+    <string name="warning_no_connection">Your network connection might be down.  Please verify.  Unable to continue.</string>
+	<string name="warning_no_data_collected">No Tweets found or network error.</string>
+    
+    
+	<!-- list of all our twitters -->
+    
+    <string-array name="tweeters">
+        <item>heybluez</item>
+        <item>rockmaninoff</item>
+        <item>bsirach</item>
+        <item>willowtreeapps</item>
+        <item>jonba</item>
+        <item>richie681</item>
+    </string-array>
+
+</resources>

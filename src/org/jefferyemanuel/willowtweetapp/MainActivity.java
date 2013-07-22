@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
-
+import org.jefferyemanuel.willowtweetapp.TaskFragment.TaskCallbacks;
 import org.json.JSONException;
 
 import twitter4j.Paging;
@@ -28,7 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerTitleStrip;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -52,7 +50,7 @@ import android.widget.Toast;
  * */
 
 public class MainActivity extends FragmentActivity implements
-		OnItemClickListener {
+		OnItemClickListener,TaskCallbacks{
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -62,17 +60,18 @@ public class MainActivity extends FragmentActivity implements
 	 * intensive, it may be best to switch to a
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
-	private SectionsPagerAdapter mSectionsPagerAdapter;
-	private ConfigurationBuilder mTwitterConfigBuilder;
-	private Fragment mListfragment;
-	private ProgressDialog pdialog;
+	private static SectionsPagerAdapter mSectionsPagerAdapter;
+
+	private static Fragment mListfragment;
+	TaskFragment mTaskFragment;
+	
 	private static NumberFormat nf;
 	//private CommonsHttpOAuthConsumer httpOauthConsumer;
 	//private CommonsHttpOAuthProvider httpOauthprovider;
 
 	//contains each tweeters array of info we collected in background
 	static ArrayList<ArrayList<HashMap<String, Object>>> mTweetersObj_map;
-	String[] mpageTitles;
+	static String[] mpageTitles;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -99,29 +98,42 @@ public class MainActivity extends FragmentActivity implements
 		// primary sections of the app.
 
 		/* set up twitter4j library with oAUTH keys, never call more the once */
-		mTwitterConfigBuilder = new ConfigurationBuilder();
-		mTwitterConfigBuilder.setOAuthConsumerKey(Consts.CONSUMER_KEY);
-		mTwitterConfigBuilder
-				.setOAuthConsumerSecret(Consts.CONSUMER_SECRET_KEY);
-		mTwitterConfigBuilder.setOAuthAccessToken(Consts.ACCESS_TOKEN);
-		mTwitterConfigBuilder
-				.setOAuthAccessTokenSecret(Consts.ACCESS_TOKEN_SECRET);
+		
 
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
+		/*
+		 * define our global map of tweeter's object. In this case it will
+		 * be an array of many arrays of tweeter objects
+		 */
+		mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, Object>>>();
+		
+		
 		//this calls expensive so lets do it once as it has to fetch the system locale which can be intense
 		nf = NumberFormat.getInstance();
 
+		
+		
 		/*
 		 * if the user is not on line warn about connection else start the
 		 * processing twitter JSON feed
 		 */
 		if (!isOnline())
 			createToast(getString(R.string.warning_no_connection));
-		else
-			new LongOperation(mTwitterConfigBuilder).execute("");
-
+		else{
+			FragmentManager fm = getSupportFragmentManager();
+			
+			 mTaskFragment = (TaskFragment) fm.findFragmentByTag("task");
+		 
+		    // If the Fragment is non-null, then it is currently being
+		    // retained across a configuration change.
+		    if (mTaskFragment == null) {
+		    	mTaskFragment = new TaskFragment();
+		      fm.beginTransaction().add(mTaskFragment, "task").commit();
+			
+		}
+		}
 	}
 
 	@Override
@@ -163,207 +175,31 @@ public class MainActivity extends FragmentActivity implements
 	 * background mechanism. Here we parse JSON twitter feed and update main UI
 	 * Thread to beginning showing visuals
 	 */
-	class LongOperation extends AsyncTask<String, Integer, Boolean> {
 
-		ConfigurationBuilder cb;
-		/* alloc a twitter object to make read and write calls */
-		Twitter twitter;
-
-		public LongOperation(ConfigurationBuilder twitterConfigBuilder) {
-
-			this.cb = twitterConfigBuilder;
-			/* alloc a twitter object to make read and write calls */
-			twitter = new TwitterFactory(cb.build()).getInstance();
-
-		}
-
-		/*
-		 * just incase we get cancelled lets hide the progress dialog as its not
-		 * a fragment dialog
-		 */
-		@Override
-		protected void onCancelled() {
-			// TODO Auto-generated method stub
-			super.onCancelled();
-			if (pdialog != null && pdialog.isShowing())
-				pdialog.dismiss();
-
-		}
-
-		/*
-		 * background process. Theory: Lets get all of our known tweeters. Now
-		 * lets loop through all of our tweeters and collect all the
-		 * statuses(tweets). We collect from the first page an xNumber of
-		 * statuses. You can change this to 200 max per page i believe but check
-		 * twitter docs
-		 */
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-
-			String[] tweeters = getResources().getStringArray(R.array.tweeters);
-
-			/*
-			 * define our global map of tweeter's object. In this case it will
-			 * be an array of many arrays of tweeter objects
-			 */
-			mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, Object>>>();
-
-			/*
-			 * our array to hold tweet statuses we retrieve as we parse each
-			 * tweeters page
-			 */
-			List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
-
-			/* define our loop variables outside the loop to avoid massive GC */
-			ArrayList<HashMap<String, Object>> tweeterInfo;
-			HashMap<String, Object> object;
-			User user;
-			String avatar;
-
-			/* define how many pages we will retrieve from twitter time line */
-			Paging pagination = new Paging(1, Consts.NUMBER_OF_STATUSES);
-
-			/*
-			 * loop through and for each tweeters name get his/her timeline and
-			 * save each status's info into a hashmap
-			 */
-
-			for (String tweeter : tweeters) {
-				try {
-					//grab xNumber of tweets from 1st page for each tweeter
-					statuses = twitter.getUserTimeline(tweeter, pagination);
-
-				} catch (TwitterException e) {
-					Log.e(Consts.TAG, "Error logging into Twitter");
-					Log.e(Consts.TAG, e.getMessage());
-				}
-
-				/*
-				 * save all user specific info into an array ofhashmap object
-				 * called tweeterInfo.
-				 */
-				tweeterInfo = new ArrayList<HashMap<String, Object>>();
-
-				if (statuses.size() > 0) {
-
-					for (twitter4j.Status s : statuses) {
-
-						/*
-						 * loop through each status(tweet) and save the
-						 * characters of that tweet to an object
-						 */
-						object = new HashMap<String, Object>();
-
-						//handle retweets
-						object.put(Consts.KEY_IS_RETWEET, s.isRetweet());
-						if (s.isRetweet()) {
-
-							s = s.getRetweetedStatus();
-						}
-						avatar = s.getUser().getProfileImageURL();
-
-						user = s.getUser();
-
-						object.put(Consts.KEY_TWEET_MSG, s.getText());
-						String timePosted = s.getCreatedAt().toString();//TODO check format of date
-						object.put(Consts.KEY_TWEETDATE, timePosted);
-						object.put(Consts.KEY_AUTHOR, user.getName());
-						object.put(Consts.KEY_AVATAR, avatar);
-						object.put(Consts.KEY_USER_OBJECT, user);
-						object.put(Consts.KEY_TWEED_ID, s.getId());
-						object.put(Consts.KEY_TWEET_COUNT,
-								"" + user.getStatusesCount());
-						object.put(Consts.KEY_FOLLOWERS,
-								user.getFollowersCount());
-						object.put(Consts.KEY_FOLLOWING, user.getFriendsCount());
-
-						if (Consts.DEVELOPER_MODE)
-							Log.v(Consts.TAG,
-									"author:"
-											+ (String) object
-													.get(Consts.KEY_AUTHOR)
-											+ " Status count:"
-											+ (String) object
-													.get(Consts.KEY_TWEET_COUNT));
-
-						/*
-						 * add status'es(tweets) info to our array of tweets for
-						 * this one specific tweeter
-						 */
-						tweeterInfo.add(object);
-
-					}
-
-					/*
-					 * all done looping for one specific tweeter, lets save all
-					 * that users status's into our global map
-					 */
-					mTweetersObj_map.add(tweeterInfo);
-
-				}
-
-			}//end for loop as we now have info on each tweeter
-
-			/* if the global map is empty is our indicator something went wrong */
-			return !mTweetersObj_map.isEmpty();
-		}
-
-		/* update main UI if all was well */
-		@Override
-		protected void onPostExecute(Boolean status) {
-
-			super.onPostExecute(status);
-			if (pdialog != null && pdialog.isShowing())
-				pdialog.dismiss();
-
-			if (status == true) {
-				// Set up the ViewPager with the sections adapter.
-
-				mViewPager = (ViewPager) findViewById(R.id.pager);
-				mViewPager.setAdapter(mSectionsPagerAdapter); //show the viewpager finally
-			} else
-				createToast(getString(R.string.warning_no_data_collected));
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-			pdialog = new ProgressDialog(MainActivity.this);
-			pdialog.setMessage("Loading...");
-			pdialog.show();
-
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... positions) {
-		}
-
-	}
 
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
 	 */
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+	public static class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 
 		}
 
-		@Override
+				@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a listFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
 			mListfragment = TweetsListFragment.newInstance();
-
+			
+			
+//			mListfragment.getFragmentManager().beginTransaction().commitAllowingStateLoss();
 			Bundle args = new Bundle();
 			args.putInt(TweetsListFragment.ARG_SECTION_NUMBER, position);
 			mListfragment.setArguments(args);
-
 			return mListfragment;
 		}
 
@@ -420,6 +256,7 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Auto-generated method stub
 			super.onActivityCreated(savedInstanceState);
 
+			if(Consts.DEVELOPER_MODE)Log.v(Consts.TAG,position+"<---");
 			Bundle args = this.getArguments();
 			position = args.getInt(ARG_SECTION_NUMBER);
 
@@ -507,6 +344,19 @@ public class MainActivity extends FragmentActivity implements
 
 		}
 
+		@Override
+		public void onSaveInstanceState(Bundle outState) 
+        {
+
+			
+		String tabTitle=(String) mSectionsPagerAdapter.getPageTitle(position)	;
+    	    outState.putString("tab", tabTitle);
+    		
+            super.onSaveInstanceState(outState);
+            
+
+        }
+	
 	}
 
 	@Override
@@ -543,5 +393,42 @@ public class MainActivity extends FragmentActivity implements
 		this.startActivity(intent);
 
 	}
+
+	@Override
+	public void onPreExecute() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProgressUpdate(ArrayList<HashMap<String, Object>> UsersTweet) {
+		/*
+		 * all done looping for one specific tweeter, lets save all
+		 * that users status's into our global map
+		 */
+	mTweetersObj_map.add(UsersTweet);	
+	}
+
+	@Override
+	public void onCancelled() {
+	}
+
+
+	
+	@Override
+	public void onPostExecute(boolean status) {
+		// TODO Auto-generated method stub
+	
+		if (status == true) {
+			// Set up the ViewPager with the sections adapter.
+
+			mViewPager = (ViewPager) findViewById(R.id.pager);
+			mViewPager.setAdapter(mSectionsPagerAdapter); //show the viewpager finally
+		} else
+			createToast(getString(R.string.warning_no_data_collected));
+		
+		 this.getSupportFragmentManager().beginTransaction().remove(mTaskFragment).commit();
+	}
+	
 
 }

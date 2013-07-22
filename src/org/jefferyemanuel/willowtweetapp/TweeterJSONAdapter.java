@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +14,16 @@ import android.widget.TextView;
 
 public class TweeterJSONAdapter extends BaseAdapter {
 
-	public TweeterJSONAdapter(Context context, int textViewResourceId,
+	public TweeterJSONAdapter(FragmentActivity activity, int textViewResourceId,
 			ArrayList<HashMap<String, Object>> objects) {
 
-		this.context = context;
+		this.context = activity;
 		mTweeterInfo = objects;
 		// TODO Auto-generated constructor stub
 	}
 
 	private ArrayList<HashMap<String, Object>> mTweeterInfo;
-	private Context context;
+	private FragmentActivity context;
 
 	/*
 	 * public TweeterJSONAdapter (Context context){
@@ -89,7 +90,7 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		//new DownloadImageTask().fetchDrawableOnThread(avatarURL, iv_avatar);
 		
 		
-		DownloadImageTask.getInstance().loadBitmap(avatarURL, iv_avatar);
+		DownloadImageTask.getInstance(context).loadBitmap(avatarURL, iv_avatar);
 		
 		tv_author.setText(author);
 		tv_message.setText(tweet);

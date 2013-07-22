@@ -5,6 +5,7 @@ import java.io.InputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -14,21 +15,21 @@ import android.widget.ImageView;
 public class DownloadImageTask {
 
 	private LruCache<String, Bitmap> mMemoryCache;
-
 	/* create a singleton class to call this from multiple classes */
 
 	private static DownloadImageTask instance = null;
 
-	public static DownloadImageTask getInstance() {
+	public static DownloadImageTask getInstance(FragmentActivity activity) {
 		if (instance == null) {
-			instance = new DownloadImageTask();
+			instance = new DownloadImageTask(activity);
+
 		}
+
 		return instance;
 	}
 
 	//lock the constructor from public instances
-	private DownloadImageTask() {
-
+	private DownloadImageTask(FragmentActivity activity) {
 		// Get max available VM memory, exceeding this amount will throw an
 		// OutOfMemory exception. Stored in kilobytes as LruCache takes an
 		// int in its constructor.
@@ -37,19 +38,41 @@ public class DownloadImageTask {
 		// Use 1/8th of the available memory for this memory cache.
 		final int cacheSize = maxMemory / 8;
 
-		mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-			@Override
-			protected int sizeOf(String key, Bitmap bitmap) {
-				// The cache size will be measured in kilobytes rather than
-				// number of items.
-				return bitmap.getByteCount() / 1024;
-			}
-		};
+		//------
+		RetainFragment mRetainFragment = RetainFragment
+				.findOrCreateRetainFragment(activity
+						.getSupportFragmentManager());
+
+		//save the cache incase Activity orientation changes
+
+		mMemoryCache = RetainFragment.mRetainedCache;
+
+		if (mMemoryCache == null) {
+			/* we dont have the cache , lets create one */
+			//initialize our cache here
+			mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+				@Override
+				protected int sizeOf(String key, Bitmap bitmap) {
+					// The cache size will be measured in kilobytes rather than
+					// number of items.
+					return bitmap.getByteCount() / 1024;
+				}
+			};
+
+			/*
+			 * definetly have a cache now, lets save it to our RETAINED fragment
+			 * incase of oriengation change on Android
+			 */
+			mRetainFragment.mRetainedCache = mMemoryCache;
+		}
+		//------
 
 	}
 
-	/*accessors to this class should call this method solely to either add image to teh catch or spawn a child thread to
-	 * fetch the http image*/
+	/*
+	 * accessors to this class should call this method solely to either add
+	 * image to teh catch or spawn a child thread to fetch the http image
+	 */
 	public void loadBitmap(String avatarURL, ImageView imageView) {
 		final String imageKey = String.valueOf(avatarURL);
 

@@ -3,30 +3,21 @@ package org.jefferyemanuel.willowtweetapp;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.jefferyemanuel.willowtweetapp.TaskFragment.TaskCallbacks;
 import org.json.JSONException;
 
-import twitter4j.Paging;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -335,7 +326,7 @@ public class MainActivity extends FragmentActivity implements
 					/* make a network call to make bitmap from http image source */
 					//new DownloadImageTask(headerImage).execute(avatarURL);
 					//new DownloadImageTask().fetchDrawableOnThread(avatarURL,headerImage);
-					DownloadImageTask.getInstance().loadBitmap(avatarURL,
+					DownloadImageTask.getInstance(getActivity()).loadBitmap(avatarURL,
 							headerImage);
 				}
 			}
@@ -349,6 +340,7 @@ public class MainActivity extends FragmentActivity implements
         {
 
 			
+			/*cheap fix not working ...leave it for now*/
 		String tabTitle=(String) mSectionsPagerAdapter.getPageTitle(position)	;
     	    outState.putString("tab", tabTitle);
     		
@@ -368,7 +360,6 @@ public class MainActivity extends FragmentActivity implements
 		 * A listView item click listener that on item click either goes to web
 		 * twitter or if app is installed opens up users profile
 		 */
-//createToast("got clicked");
 		Intent intent = null;
 
 		/*
@@ -397,7 +388,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onPreExecute() {
 		// TODO Auto-generated method stub
-		
+		mTweetersObj_map.clear();
 	}
 
 	@Override
@@ -406,6 +397,8 @@ public class MainActivity extends FragmentActivity implements
 		 * all done looping for one specific tweeter, lets save all
 		 * that users status's into our global map
 		 */
+		
+		
 	mTweetersObj_map.add(UsersTweet);	
 	}
 

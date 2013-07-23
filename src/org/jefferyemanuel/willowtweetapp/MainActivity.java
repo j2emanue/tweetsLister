@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -53,7 +54,7 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	private static SectionsPagerAdapter mSectionsPagerAdapter;
 
-	private static Fragment mListfragment;
+	private static TweetsListFragment mListfragment;
 	TaskFragment mTaskFragment;
 	
 	private static NumberFormat nf;
@@ -172,7 +173,7 @@ public class MainActivity extends FragmentActivity implements
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
 	 */
-	public static class SectionsPagerAdapter extends FragmentPagerAdapter {
+	public static class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -184,13 +185,10 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a listFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			mListfragment = TweetsListFragment.newInstance();
+			mListfragment = TweetsListFragment.newInstance(position);
 			
-			
-//			mListfragment.getFragmentManager().beginTransaction().commitAllowingStateLoss();
-			Bundle args = new Bundle();
-			args.putInt(TweetsListFragment.ARG_SECTION_NUMBER, position);
-			mListfragment.setArguments(args);
+		//			mListfragment.getFragmentManager().beginTransaction().commitAllowingStateLoss();
+		
 			return mListfragment;
 		}
 
@@ -226,11 +224,15 @@ public class MainActivity extends FragmentActivity implements
 		String key;
 		ListView lv;
 
-		public static TweetsListFragment newInstance() {
+		public static TweetsListFragment newInstance(int position) {
+			Bundle args = new Bundle();
+			args.putInt(TweetsListFragment.ARG_SECTION_NUMBER, position);			
 			TweetsListFragment f = new TweetsListFragment();
+			f.setArguments(args);
 			return f;
 		}
 
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -239,6 +241,7 @@ public class MainActivity extends FragmentActivity implements
 					.inflate(R.layout.listfragment_layout, null);
 			lv = (ListView) rootView.findViewById(android.R.id.list);
 			lv.setOnItemClickListener((OnItemClickListener) getActivity());
+			
 			return rootView; //You must return your view here
 		}
 
@@ -247,7 +250,6 @@ public class MainActivity extends FragmentActivity implements
 			// TODO Auto-generated method stub
 			super.onActivityCreated(savedInstanceState);
 
-			if(Consts.DEVELOPER_MODE)Log.v(Consts.TAG,position+"<---");
 			Bundle args = this.getArguments();
 			position = args.getInt(ARG_SECTION_NUMBER);
 
@@ -334,13 +336,13 @@ public class MainActivity extends FragmentActivity implements
 			lv.addHeaderView(header, null, false);
 
 		}
-
+/*
 		@Override
 		public void onSaveInstanceState(Bundle outState) 
         {
 
 			
-			/*cheap fix not working ...leave it for now*/
+			cheap fix not working ...leave it for now
 		String tabTitle=(String) mSectionsPagerAdapter.getPageTitle(position)	;
     	    outState.putString("tab", tabTitle);
     		
@@ -348,7 +350,7 @@ public class MainActivity extends FragmentActivity implements
             
 
         }
-	
+*/	
 	}
 
 	@Override
@@ -392,34 +394,43 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onProgressUpdate(ArrayList<HashMap<String, Object>> UsersTweet) {
-		/*
-		 * all done looping for one specific tweeter, lets save all
-		 * that users status's into our global map
-		 */
+	public void onProgressUpdate(int value) {
 		
 		
-	mTweetersObj_map.add(UsersTweet);	
+//	mTweetersObj_map.add(UsersTweet);	
 	}
 
 	@Override
 	public void onCancelled() {
+	/*prevent any leakage and remove task fragment on cancel*/
+		this.getSupportFragmentManager().beginTransaction().remove(mTaskFragment).commit();
 	}
 
 
 	
 	@Override
-	public void onPostExecute(boolean status) {
+	public void onPostExecute(ArrayList<ArrayList<HashMap<String, Object>>> result) {
 		// TODO Auto-generated method stub
 	
-		if (status == true) {
+		if (result.size()>0) {
+	
+			/*
+			 * all done looping for one specific tweeter, lets save all
+			 * that users status's into our global map
+			 */
+		
+			mTweetersObj_map=result;
+		
 			// Set up the ViewPager with the sections adapter.
-
+			
 			mViewPager = (ViewPager) findViewById(R.id.pager);
 			mViewPager.setAdapter(mSectionsPagerAdapter); //show the viewpager finally
+			
+			
 		} else
 			createToast(getString(R.string.warning_no_data_collected));
 		
+		/*remove the task fragment from the fragment manager so it can be reused again*/
 		 this.getSupportFragmentManager().beginTransaction().remove(mTaskFragment).commit();
 	}
 	

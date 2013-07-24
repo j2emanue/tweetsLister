@@ -17,6 +17,7 @@ public class Consts {
 	//developer and logging options
     public static final boolean DEVELOPER_MODE =true;
     public static final String TAG="willowtweet";
+    public static final String TAG_FRAGMENT="fragments";
 			
     //MAP keys  (for json twitter object)
     public static final String KEY_USER_OBJECT="user";

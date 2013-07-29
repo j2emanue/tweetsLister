@@ -2,10 +2,10 @@ package org.jefferyemanuel.willowtweetapp;
 
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -19,7 +19,7 @@ public class DownloadImageTask {
 
 	private static DownloadImageTask instance = null;
 
-	public static DownloadImageTask getInstance(FragmentActivity activity) {
+	public static DownloadImageTask getInstance(Activity activity) {
 		if (instance == null) {
 			instance = new DownloadImageTask(activity);
 
@@ -29,7 +29,7 @@ public class DownloadImageTask {
 	}
 
 	//lock the constructor from public instances
-	private DownloadImageTask(FragmentActivity activity) {
+	private DownloadImageTask(Activity activity) {
 		// Get max available VM memory, exceeding this amount will throw an
 		// OutOfMemory exception. Stored in kilobytes as LruCache takes an
 		// int in its constructor.
@@ -41,13 +41,13 @@ public class DownloadImageTask {
 		//------
 		RetainFragment mRetainFragment = RetainFragment
 				.findOrCreateRetainFragment(activity
-						.getSupportFragmentManager());
+						.getFragmentManager());
 
 		//save the cache incase Activity orientation changes
 
 		mMemoryCache = RetainFragment.mRetainedCache;
 
-		if (mMemoryCache == null) {
+		if (mMemoryCache == null) { 
 			/* we dont have the cache , lets create one */
 			//initialize our cache here
 			mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {

@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:orientation="horizontal" >
+        <Button
+             android:id="@+id/btn_add_newuser" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_gravity="center_vertical"
+        android:onClick="onClick"
+        android:text="ADD"/> 
+        <EditText 
+            android:id="@+id/et_additional_username"
+                android:background="@color/crystal_blue" 
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:padding="1dp"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:lines="3"
+                android:hint="@string/warning_nothingEntered" 
+                 />
+   </LinearLayout>
+        
+       <ListView 
+        android:id="@+android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:headerDividersEnabled="true"
+        android:divider="@color/light_font"
+        android:drawSelectorOnTop="false"
+   	 	android:dividerHeight="1.0sp"
+   	 	android:background="@drawable/listshape"
+   	 	 />
+    
+ 
+    </LinearLayout> 

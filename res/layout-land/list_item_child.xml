@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- had an issue with focus and onitemclick was not getting triggered for list items.
+setting descents focus to blocksDescendants
+src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-after-the-listview-is-scrolled
+ -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_list_item"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+   >
+
+    <!-- 1dp padding in the avatar gives it the look of a border since background is set to black  -->
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+            android:layout_marginLeft="3dp"
+        android:adjustViewBounds="true"
+        android:descendantFocusability="blocksDescendants"
+        android:background="@color/black"
+        android:padding="1dp"
+        android:scaleType="fitCenter" />
+
+    <LinearLayout
+        android:id="@+id/container_tweet_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:hapticFeedbackEnabled="true" >
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:textColor="@color/white"
+            android:descendantFocusability="blocksDescendants"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_tweet_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:autoLink="web"
+            android:descendantFocusability="blocksDescendants"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>

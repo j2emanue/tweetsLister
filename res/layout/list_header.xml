@@ -51,7 +51,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textColor="@color/crystal_blue"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:text="0 Tweets" />
 
     <View
         android:layout_width="match_parent"

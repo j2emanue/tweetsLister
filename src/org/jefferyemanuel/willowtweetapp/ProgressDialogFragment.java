@@ -10,8 +10,8 @@ import android.view.KeyEvent;
 
 public class ProgressDialogFragment extends DialogFragment {
 
-	public static final String ARG_MESSAGE = "message";
-	
+	private static final String ARG_MESSAGE = "message";
+	private ProgressDialog dialog;
 	public static ProgressDialogFragment newInstance(String msg) {
 	
 		
@@ -37,24 +37,27 @@ public class ProgressDialogFragment extends DialogFragment {
 		public void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
-			setRetainInstance(true);
+			//setRetainInstance(true);
 	    }
 
-	  
+	  public void setProgressOfDialog(int value){
+		  
+		  if(dialog!=null)
+			  dialog.setProgress(value);
+	  }
 	  
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		final ProgressDialog dialog = new ProgressDialog(getActivity());
+		dialog = new ProgressDialog(getActivity());
 		
 		Bundle args = this.getArguments();
 		String msg = args.getString(ARG_MESSAGE);
-
 		
 		dialog.setMessage(msg);
-		dialog.setIndeterminate(true);
+		dialog.setIndeterminate(false);
 		dialog.setCancelable(false);
-
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		// Disable the back button
 		OnKeyListener keyListener = new OnKeyListener() {
 

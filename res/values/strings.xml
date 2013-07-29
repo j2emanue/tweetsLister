@@ -11,8 +11,15 @@
     <!-- warnings -->
     <string name="warning_no_connection">Your network connection might be down.  Please verify.  Unable to continue.</string>
 	<string name="warning_no_data_collected">No Tweets found or network error.</string>
-    
-    
+     <string name="warning_nothingEntered">Enter A Twitter User name i.e @googleapps
+         or bulk inserts with comma seperated list</string>
+     <string name="warning_item_deleted">Item has been deleted.</string>
+     <string name="warning_item_inserted_previously">Item has already exist !</string> 
+     <string name="warning_noitems_present">No items have been added to the list.  Press the plus button in the action bar.</string>
+     
+     <!-- notifications -->
+       <string name="notification_loading_items">Loading...</string> 
+     
 	<!-- list of all our twitters -->
     
     <string-array name="tweeters">
@@ -24,4 +31,6 @@
         <item>richie681</item>
     </string-array>
 
+    
+    
 </resources>

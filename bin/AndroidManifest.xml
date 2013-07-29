@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" /> <!-- might reqire later on not now -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -26,8 +28,8 @@
         >
         <activity
             android:name="org.jefferyemanuel.willowtweetapp.MainActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
              >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,21 +37,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- might implement oAUTH later so need a callback when twitter authenticates us,can ignore -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:host="twitter"
-                    android:scheme="app" />
-            </intent-filter>
         </activity>
-    </application>
+        
+        <activity
+            android:name="org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"
+             >
+   </activity>
+   
+         <provider
+            android:name="org.jefferyemanuel.database.TweeterContentProvider"
+     		android:authorities="org.jefferyemanuel.database.TweeterContentProvider"
+            android:exported="false" />
+        
+        </application>
 
 </manifest>

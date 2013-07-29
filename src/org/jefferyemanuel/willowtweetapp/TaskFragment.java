@@ -1,5 +1,7 @@
 package org.jefferyemanuel.willowtweetapp;
 
+import static org.jefferyemanuel.willowtweetapp.Utils.printLog;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,31 +11,36 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
-
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * This Fragment manages a single background task and retains itself across
  * configuration changes.
  */
-public class TaskFragment extends Fragment {
-	private ProgressDialogFragment pdialog;
+public class TaskFragment extends Fragment  {
+	//private ProgressDialogFragment pdialog;
 
-	private static ConfigurationBuilder mTwitterConfigBuilder;
+	private Configuration twitterConfiguration;
+	
+	
+	public Configuration getTwitterCoonfiguration() {
+		return twitterConfiguration;
+	}
 
+
+	public void setTwitterCoonfiguration(
+			Configuration twitterConfiguration) {
+		this.twitterConfiguration = twitterConfiguration;
+	}
+
+	private ArrayList<String> mUsernamesList;
+	
 	/**
 	 * Callback interface through which the fragment will report the task's
 	 * progress and results back to the Activity.
@@ -49,9 +56,12 @@ public class TaskFragment extends Fragment {
 				ArrayList<ArrayList<HashMap<String, Object>>> allUserTweetsMap);
 	}
 
-	public static TaskFragment newInstance() {
+	public static TaskFragment newInstance(String[] userList) {
 
 		TaskFragment f = new TaskFragment();
+		Bundle args = new Bundle();
+		args.putStringArray("userlist",userList);
+		f.setArguments(args);
 		return f;
 	}
 
@@ -74,6 +84,7 @@ public class TaskFragment extends Fragment {
 		}
 	}
 
+	
 	/**
 	 * This method will only be called once when the retained Fragment is first
 	 * created.
@@ -82,20 +93,12 @@ public class TaskFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mTwitterConfigBuilder = new ConfigurationBuilder();
-		mTwitterConfigBuilder.setOAuthConsumerKey(Consts.CONSUMER_KEY);
-		mTwitterConfigBuilder
-				.setOAuthConsumerSecret(Consts.CONSUMER_SECRET_KEY);
-		mTwitterConfigBuilder.setOAuthAccessToken(Consts.ACCESS_TOKEN);
-		mTwitterConfigBuilder
-				.setOAuthAccessTokenSecret(Consts.ACCESS_TOKEN_SECRET);
-
+		
 		// Retain this fragment across configuration changes.
 		setRetainInstance(true);
-
-		// Create and execute the background task.
-		mTask = new LongOperation(mTwitterConfigBuilder);
+		mTask = new LongOperation();
 		mTask.execute();
+			
 	}
 
 	/**
@@ -108,6 +111,8 @@ public class TaskFragment extends Fragment {
 		mCallbacks = null;
 	}
 
+	
+	
 	/**
 	 * /* background mechanism. Here we parse JSON twitter feed and update main
 	 * UI Thread to beginning showing visuals
@@ -117,11 +122,13 @@ public class TaskFragment extends Fragment {
 	 * case they are invoked after the Activity's and Fragment's onDestroy()
 	 * method have been called.
 	 */
+	
+	
 	private class LongOperation
 			extends
 			AsyncTask<Void, Integer, ArrayList<ArrayList<HashMap<String, Object>>>> {
 
-		ConfigurationBuilder cb;
+	//	ConfigurationBuilder cb;
 		/* alloc a twitter object to make read and write calls */
 		Twitter twitter;
 
@@ -130,13 +137,15 @@ public class TaskFragment extends Fragment {
 		 * array of many arrays of tweeter objects
 		 */
 		ArrayList<ArrayList<HashMap<String, Object>>> mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, Object>>>();
-
-		public LongOperation(ConfigurationBuilder twitterConfigBuilder) {
-
-			this.cb = twitterConfigBuilder;
+		String[] tweeters;
+		
+		public LongOperation() {
+			
+			
 			/* alloc a twitter object to make read and write calls */
-			twitter = new TwitterFactory(cb.build()).getInstance();
-
+			twitter = new TwitterFactory(getTwitterCoonfiguration()).getInstance();
+			Bundle args = TaskFragment.this.getArguments();
+			tweeters=args.getStringArray("userlist");
 		}
 
 		@Override
@@ -145,9 +154,6 @@ public class TaskFragment extends Fragment {
 			if (mCallbacks != null) {
 				mCallbacks.onPreExecute();
 			}
-			
-			pdialog=ProgressDialogFragment.newInstance("Loading...");
-			pdialog.show(getActivity().getSupportFragmentManager(), "dialogprogress");
 			
 		}
 
@@ -159,12 +165,6 @@ public class TaskFragment extends Fragment {
 		protected ArrayList<ArrayList<HashMap<String, Object>>> doInBackground(
 				Void... ignore) {
 
-			String[] tweeters = getResources().getStringArray(R.array.tweeters);
-
-			/*
-			 * our array to hold tweet statuses we retrieve as we parse each
-			 * tweeters page
-			 */
 			List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
 
 			/* define our loop variables outside the loop to avoid massive GC */
@@ -172,7 +172,7 @@ public class TaskFragment extends Fragment {
 			HashMap<String, Object> object;
 			User user;
 			String avatar;
-			int usercount = 0;
+			
 			/* define how many pages we will retrieve from twitter time line */
 			Paging pagination = new Paging(1, Consts.NUMBER_OF_STATUSES);
 
@@ -180,23 +180,32 @@ public class TaskFragment extends Fragment {
 			 * loop through and for each tweeters name get his/her timeline and
 			 * save each status's info into a hashmap
 			 */
+			printLog(Consts.TAG,"beginning background Task in taskFragment");
 
 			for (String tweeter : tweeters) {
-				usercount++;
-				try {
-					//grab xNumber of tweets from 1st page for each tweeter
-					statuses = twitter.getUserTimeline(tweeter, pagination);
-
-				} catch (TwitterException e) {
-					Log.e(Consts.TAG, "Error logging into Twitter");
-					Log.e(Consts.TAG, e.getMessage());
-				}
-
+				printLog(Consts.TAG,"looping through statuses for tweeter:"+tweeter);
+			
 				/*
 				 * save all user specific info into an array ofhashmap object
 				 * called tweeterInfo.
 				 */
 				tweeterInfo = new ArrayList<HashMap<String, Object>>();
+				
+				try {
+					//grab xNumber of tweets from 1st page for each tweeter
+					statuses = twitter.getUserTimeline(tweeter, pagination);
+
+				} catch (TwitterException e) {
+					Log.w(Consts.TAG, "Error locating tweeter named:"+tweeter+" on Twitter");
+					Log.w(Consts.TAG, e.getMessage());
+					
+					/*save a blank object to display to balance the pageviewer*/
+					mTweetersObj_map.add(tweeterInfo);
+					/*continue finding statuses of other twitters*/
+					continue;
+				}
+
+			
 
 				if (statuses.size() > 0) {
 
@@ -248,10 +257,17 @@ public class TaskFragment extends Fragment {
 
 					}
 
-					mTweetersObj_map.add(tweeterInfo);
+				//	mTweetersObj_map.add(tweeterInfo);
 
 				}
-				/*
+				//else
+					mTweetersObj_map.add(tweeterInfo);
+					
+					
+					int progressresult=(int)((double)mTweetersObj_map.size()/tweeters.length*100);
+					
+					publishProgress(progressresult);
+					/*
 				 * tweet might have no status's so we publish after check of
 				 * number of status's and send a empty map for no statuses
 				 */
@@ -265,7 +281,8 @@ public class TaskFragment extends Fragment {
 
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			
+			int progress=values[0];
+			mCallbacks.onProgressUpdate(progress);
 		}
 
 		@Override
@@ -273,8 +290,7 @@ public class TaskFragment extends Fragment {
 			if (mCallbacks != null) {
 				mCallbacks.onCancelled();
 
-				if(pdialog!=null)
-				pdialog.dismissAllowingStateLoss();
+				
 				
 			}
 		}
@@ -283,34 +299,25 @@ public class TaskFragment extends Fragment {
 		protected void onPostExecute(
 				ArrayList<ArrayList<HashMap<String, Object>>> result) {
 			super.onPostExecute(result);
-
-			if (pdialog != null)
-				pdialog.dismissAllowingStateLoss();
 			
-			if (mCallbacks != null) {
+			if (mCallbacks != null)
 				mCallbacks.onPostExecute(result);
-			}
-
 		}
+	
+		
+		
 	}
 
-	/* creates a custom toast message, gives our app flavor */
-	public void createToast(String msg) {
+	void showErrorDialog(String errorMessage) {
 
-		LayoutInflater inflater = (LayoutInflater) getActivity()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		MyDialogFragment newFragment = MyDialogFragment.newInstance(getActivity());
 
-		View layout = inflater.inflate(R.layout.toast_layout, null);
+		Bundle args = new Bundle();
+		args.putString(Consts.MESSAGE, errorMessage);
+		newFragment.setArguments(args);
 
-		TextView text = (TextView) layout.findViewById(R.id.text);
-		text.setText(msg);
-
-		Toast toast = new Toast(getActivity());
-		toast.setGravity(Gravity.BOTTOM, 0, 40);//TODO convert by display metric
-
-		toast.setDuration(Toast.LENGTH_LONG);
-		toast.setView(layout);
-		toast.show();
+		newFragment.show(getFragmentManager(), "dialog");
 	}
 
-}
+	
+	}

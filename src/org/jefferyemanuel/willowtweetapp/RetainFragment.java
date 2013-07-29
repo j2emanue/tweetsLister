@@ -2,10 +2,10 @@ package org.jefferyemanuel.willowtweetapp;
 
 
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.LruCache;
 
 /*a RETAINED fragment used to keep a reference to the LruCache map.  In an orientation change event this fragment will

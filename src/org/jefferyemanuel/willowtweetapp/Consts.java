@@ -1,6 +1,9 @@
 package org.jefferyemanuel.willowtweetapp;
 
 
+import android.net.Uri;
+
+
 /**
  * This class holds global constants that are used throughout the application
  * to support in-app billing.
@@ -33,7 +36,34 @@ public class Consts {
     public static final String KEY_FOLLOWING="following";
     
  
+    // Database table
+	  public static final String TABLE_TWEETER_INFO = "tweeterinfo";
+	  public static final String COLUMN_ID = "_id";
+	  public static final String COLUMN_USER = "username";
+	
+	  
+	  public static final String DATABASE_NAME = "willowtweet.db";
+	  public static final String AUTHORITY = "org.jefferyemanuel.database.TweeterContentProvider";
+	  public static final int DATABASE_VERSION = 1;
+
+	  //content provider
+	  public static final Uri CONTENT_URI = Uri.parse("content://" + Consts.AUTHORITY
+		      + "/" + "tweeters");
+	  
+	//  public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.tweeter.tweeterinfo";
+
+	//cursor loader
+	  public static final int LOADER_ID = 0x01;
+	 //asynchTaskLoader
+	  public static final int LOADER_ASYNCH_ID = 0x02;
+	  
+		//dialogfragment constants
+	  public static final String MESSAGE = "message";
+		
     
+	  //task fragment id
+	  public static final String TASK_FRAGMENT_ID="task";
+	  
     //Twitter authentication oAUTH keys
     //TODO use a webservice call to get this key never leave it in local code base
     public static final String CONSUMER_KEY="eNLyfXOWo0rGODaI2KR0dQ"; // 
@@ -45,7 +75,18 @@ public class Consts {
     public static final String URL_ACCESS_TOKEN= "https://twitter.com/oauth/access_token";
     public static final String URL_AUTHORIZE= "https://twitter.com/oauth/authorize";
     
-    //configuration constaants
+    //handler message descriptions
+    public static final String HANDLER_SHOW_DIALOG="showdialog";
+    public static final String HANDLER_HIDE_DIALOG="hidedialog";
+    public static final String HANDLER_REMOVE_TASK="removetask";
+    public static final String HANDLER_BEGIN_TASK="starttask";
+    //configuration constants
     public static final int NUMBER_OF_STATUSES=20;
-    	  
+
+    
+    //disk cache constants
+    public static final int IO_BUFFER_SIZE = 8 * 1024;
+    public static final int DISK_CACHE_SIZE = 1024 * 1024 * 20; // 20MB
+	public static final int COMPRESS_QUALITY = 100;
+	
 }

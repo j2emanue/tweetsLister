@@ -4,32 +4,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TweeterJSONAdapter extends BaseAdapter {
 
-	public TweeterJSONAdapter(FragmentActivity activity, int textViewResourceId,
-			ArrayList<HashMap<String, Object>> objects) {
+	public TweeterJSONAdapter(FragmentActivity activity,
+			int textViewResourceId, ArrayList<HashMap<String, Object>> objects,
+			DiskLruImageCache imageDiskCache) {
 
 		this.context = activity;
 		mTweeterInfo = objects;
+		this.imageDiskCache = imageDiskCache;
 		// TODO Auto-generated constructor stub
 	}
 
 	private ArrayList<HashMap<String, Object>> mTweeterInfo;
 	private FragmentActivity context;
+	private DiskLruImageCache imageDiskCache;
 
-	/*
-	 * public TweeterJSONAdapter (Context context){
-	 * 
-	 * this.context=context; }
-	 */
 	@Override
 	public int getCount() {
 		return mTweeterInfo.size();
@@ -67,7 +68,7 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		//view might be recycled we check here
 		if (convertView != null) {
 			view = convertView;
-		
+
 		} else {
 
 			LayoutInflater inflater = (LayoutInflater) context
@@ -81,25 +82,55 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		TextView tv_author = (TextView) view.findViewById(R.id.tv_name);
 		ImageView iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
 
+		/*
+		 * here we check if we are in landscape mode give another look to the
+		 * app for all odd positions, we could have also done this by inflating
+		 * an odd and even list child view
+		 */
+		if (getRotation(context) == Configuration.ORIENTATION_LANDSCAPE)
+			if (position % 2 == 0) {
+				view.setBackgroundResource(R.color.pink);
+				tv_author.setTextColor(context.getResources()
+						.getColorStateList(R.color.white));
+
+			} else {
+				view.setBackgroundResource(R.color.white);
+				//	tv_message.setTextColor(context.getResources().getColorStateList(R.color.black));
+				tv_author.setTextColor(context.getResources()
+						.getColorStateList(R.color.blue));
+			}
+
 		author = (String) tweetMap.get(Consts.KEY_AUTHOR);
 		tweet = (String) tweetMap.get(Consts.KEY_TWEET_MSG);
 		avatarURL = (String) tweetMap.get(Consts.KEY_AVATAR);
 
-		/* retrieve the actual http images off the main Thread */
-		//new DownloadImageTask(iv_avatar).execute(avatarURL);
-		//new DownloadImageTask().fetchDrawableOnThread(avatarURL, iv_avatar);
-		
-		
-		DownloadImageTask.getInstance(context).loadBitmap(avatarURL, iv_avatar);
-		
+		//DownloadImageTask.getInstance(context).loadBitmap(avatarURL, iv_avatar);
+		imageDiskCache.getBitmap(avatarURL, iv_avatar);
+
 		tv_author.setText(author);
 		tv_message.setText(tweet);
 
 		view.setTag(tweetMap.get(Consts.KEY_USER_OBJECT));
-		
 
 		return view;
 
+	}
+
+	/* returns orientation of device */
+	public int getRotation(Context context) {
+		final int rotation = ((WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
+				.getRotation();
+		switch (rotation) {
+		case Surface.ROTATION_0:
+			return Configuration.ORIENTATION_PORTRAIT;
+		case Surface.ROTATION_90:
+			return Configuration.ORIENTATION_LANDSCAPE;
+		case Surface.ROTATION_180:
+			return Configuration.ORIENTATION_PORTRAIT;
+		default:
+			return Configuration.ORIENTATION_LANDSCAPE;
+		}
 	}
 
 }

@@ -4,7 +4,16 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:visible="false"
+        android:visible="true"
         android:title="@string/action_settings"/>
+    
+     <item android:id="@+id/menu_additionbtn"
+        android:showAsAction="always"
+        android:title="Add Tweeter" android:icon="@drawable/plus_sign" />
 
+     
+      <item android:id="@+id/menu_refresh_btn"
+        android:showAsAction="always"
+        android:title="refresh Listing" android:icon="@drawable/refresh" />
+     
 </menu>

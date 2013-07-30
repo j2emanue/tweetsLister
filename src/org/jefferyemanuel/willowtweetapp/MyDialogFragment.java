@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 
 class MyDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
@@ -21,6 +23,7 @@ class MyDialogFragment extends DialogFragment implements DialogInterface.OnClick
     
     public static MyDialogFragment newInstance(Context c) {
  
+  
     	return new MyDialogFragment(c);
     }
 
@@ -34,7 +37,15 @@ class MyDialogFragment extends DialogFragment implements DialogInterface.OnClick
 		setRetainInstance(true);
     }
 
-
+/*
+    @Override 
+    public void show(FragmentManager manager, String tag) {
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.add(this, tag);
+        ft.commitAllowingStateLoss();
+    }
+*/    
+    
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
     	

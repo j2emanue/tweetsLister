@@ -3,6 +3,11 @@ package org.jefferyemanuel.willowtweetapp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+
 import twitter4j.conf.ConfigurationBuilder;
 
 import android.app.Activity;
@@ -33,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,6 +86,7 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 
 		getActionBar().setHomeButtonEnabled(true);
 		
+		
 		displayListView();
 		getSupportLoaderManager().initLoader(Consts.LOADER_ID, null, this);
 
@@ -95,6 +102,7 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 			}
 		});
 
+	setAdvertisment();
 	}
 
 
@@ -196,7 +204,7 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 		return new CursorLoader(this, Consts.CONTENT_URI, null, null, null,
-				Consts.COLUMN_USER + " ASC");
+				Consts.COLUMN_USER + " COLLATE NOCASE ASC");
 
 	}
 
@@ -229,7 +237,7 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 			EditText userName = (EditText) findViewById(R.id.et_additional_username);
 
 			if (userName.getText().toString().trim().equalsIgnoreCase("")) {
-				createToast(v.getContext(),getString(R.string.warning_nothingEntered));
+				createToast(v.getContext(),getString(R.string.warning_empty_addition));
 				break;
 			}
 			
@@ -268,6 +276,34 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 				createToast(getString(R.string.warning_item_inserted_previously));
 */			break;
 		}
+	}
+
+
+	/* load ads into already inflated linear layouts */
+	public void setAdvertisment() {
+		// set up our advertisment
+		String admob_publisherID = Consts.admob_publisherID;
+
+		int[] idArray = { R.id.adone, R.id.adtwo/*, R.id.adthree 
+																 * ,
+																 * R.id.adfour,
+																 * R.id.adfive,
+																 * R.id.adsix
+																 */}; //add your ads from the xml here and thats it, all done
+		int numberOfAds = idArray.length;
+
+		// Create the adView and layout arrays
+		AdRequest AD = new AdRequest();
+		AdView[] adViews = new AdView[numberOfAds];
+		LinearLayout[] adlayouts = new LinearLayout[numberOfAds];
+
+		for (int i = 0; i < numberOfAds; i++) {
+			adViews[i] = new AdView(this, AdSize.BANNER, admob_publisherID);
+			adlayouts[i] = (LinearLayout) findViewById(idArray[i]);
+			adlayouts[i].addView(adViews[i]);
+			adViews[i].loadAd(AD);
+		}
+
 	}
 
 }

@@ -20,7 +20,7 @@
             android:scaleType="fitCenter"
             android:background="@color/black"
             android:padding="1dp"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/spinning_loader"  />
 
         <LinearLayout
             android:id="@+id/container_header_info"

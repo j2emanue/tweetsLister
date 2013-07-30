@@ -63,14 +63,14 @@ public class Consts {
     
 	  //task fragment id
 	  public static final String TASK_FRAGMENT_ID="task";
-	  
+	  public static final String TASK_ARGUMENT_USERLIST="userlist";
     //Twitter authentication oAUTH keys
     //TODO use a webservice call to get this key never leave it in local code base
     public static final String CONSUMER_KEY="eNLyfXOWo0rGODaI2KR0dQ"; // 
     public static final String CONSUMER_SECRET_KEY="FndHyAQryGeWKYPjmU92sv2F54xrLiOznK6eEtmS8";
     public static final String ACCESS_TOKEN="420386498-55vIULyl5xXP2FMpxc7GVv9GGqSolk7aLWm18K0o";
     public static final String ACCESS_TOKEN_SECRET="BRLfWdt5nqSmfn9BteAVrOA5BOXHxvUcq3uwiiXEOr0";
-    public static final String CALLBACKURL="app://twitter";
+    public static final String CALLBACKURL="app://twitter"; //ignore
     public static final String URL_REQUEST_TOKEN="https://twitter.com/oauth/request_token";
     public static final String URL_ACCESS_TOKEN= "https://twitter.com/oauth/access_token";
     public static final String URL_AUTHORIZE= "https://twitter.com/oauth/authorize";
@@ -89,4 +89,8 @@ public class Consts {
     public static final int DISK_CACHE_SIZE = 1024 * 1024 * 20; // 20MB
 	public static final int COMPRESS_QUALITY = 100;
 	
+
+	  //admob items
+    public static final String admob_publisherID = "a151f6af36e8971";
+
 }

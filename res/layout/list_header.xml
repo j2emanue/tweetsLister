@@ -18,7 +18,7 @@
             android:layout_alignParentLeft="true"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/spinning_loader" />
 
         <LinearLayout
             android:id="@+id/container_header_info"
@@ -54,6 +54,7 @@
         android:textSize="12sp"
         android:text="0 Tweets" />
 
+   
     <View
         android:layout_width="match_parent"
         android:layout_height="1dip"

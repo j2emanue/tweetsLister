@@ -29,7 +29,7 @@
                   android:shadowDx="1"
                   android:shadowDy="1"
                   android:shadowRadius="2"
-              android:padding="40dp"
+              android:padding="80dp"
               android:layout_centerInParent="true"
                android:text="@string/warning_noitems_found"/>
  

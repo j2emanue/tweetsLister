@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">StickMan Tweet Lookup</string>
+    <string name="app_name">Bulk TimeLines</string>
     <string name="action_settings">Settings</string>
     
     
@@ -10,12 +10,16 @@
     
     <!-- warnings -->
     <string name="warning_no_connection">Your network connection might be down.  Please verify.  Unable to continue.</string>
-	<string name="warning_no_data_collected">No Tweets found or network error.</string>
+	<string name="warning_no_data_collected">No valid Tweets found in list or network error.</string>
      <string name="warning_nothingEntered">Enter A Twitter User name i.e @googleapps
          or bulk inserts with comma seperated list</string>
      <string name="warning_item_deleted">Item has been deleted.</string>
      <string name="warning_item_inserted_previously">Item has already exist !</string> 
      <string name="warning_noitems_present">No items have been added to the list.  Press the plus button in the action bar.</string>
+     <string name="warning_noitems_found">No items found. \nhint:Try pressing the add button above to correct the user name.</string>
+     <string name="warning_empty_addition">You did not enter a value. \n example input: googleapps,oprah,JLo</string>
+     
+     
      
      <!-- notifications -->
        <string name="notification_loading_items">Loading...</string> 

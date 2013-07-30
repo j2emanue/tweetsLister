@@ -51,7 +51,7 @@ public class Utils {
 		Toast toast = new Toast(context);
 		toast.setGravity(Gravity.BOTTOM, 0, 40);//TODO convert by display metric
 
-		toast.setDuration(Toast.LENGTH_LONG);
+		toast.setDuration(Toast.LENGTH_SHORT);
 		toast.setView(layout);
 		toast.show();
 	}

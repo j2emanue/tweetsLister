@@ -49,37 +49,43 @@ public final class R {
     public static final class drawable {
         public static final int bird=0x7f020000;
         public static final int border=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
-        public static final int listshape=0x7f020003;
-        public static final int plus_sign=0x7f020004;
-        public static final int refresh=0x7f020005;
-        public static final int rounded_corners=0x7f020006;
-        public static final int spinning_loader=0x7f020007;
+        public static final int bubble=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
+        public static final int listshape=0x7f020004;
+        public static final int plus_sign=0x7f020005;
+        public static final int refresh=0x7f020006;
+        public static final int rounded_corners=0x7f020007;
+        public static final int spinning_loader=0x7f020008;
+        public static final int stickmanpointing=0x7f020009;
     }
     public static final class id {
-        public static final int action_settings=0x7f0c0013;
+        public static final int action_settings=0x7f0c0017;
+        public static final int adone=0x7f0c000f;
+        public static final int adthree=0x7f0c0009;
+        public static final int adtwo=0x7f0c0012;
         public static final int avatar_header=0x7f0c0003;
-        public static final int btn_add_newuser=0x7f0c000d;
+        public static final int btn_add_newuser=0x7f0c0010;
         public static final int container_header_info=0x7f0c0004;
         public static final int container_list_item=0x7f0c0008;
-        public static final int container_tweet_info=0x7f0c000a;
-        public static final int et_additional_username=0x7f0c000e;
+        public static final int container_tweet_info=0x7f0c000b;
+        public static final int et_additional_username=0x7f0c0011;
         public static final int header_layout_root=0x7f0c0002;
-        public static final int iv_avatar=0x7f0c0009;
-        public static final int iv_tweetlist_avatar_row=0x7f0c0011;
-        public static final int menu_additionbtn=0x7f0c0014;
-        public static final int menu_load_tweeter_btn=0x7f0c0016;
-        public static final int menu_refresh_btn=0x7f0c0015;
+        public static final int iv_avatar=0x7f0c000a;
+        public static final int iv_tweetlist_avatar_row=0x7f0c0015;
+        public static final int menu_additionbtn=0x7f0c0018;
+        public static final int menu_load_tweeter_btn=0x7f0c001a;
+        public static final int menu_refresh_btn=0x7f0c0019;
         public static final int pager=0x7f0c0000;
         public static final int pager_title_strip=0x7f0c0001;
-        public static final int text=0x7f0c0010;
-        public static final int toast_layout_root=0x7f0c000f;
+        public static final int text=0x7f0c0014;
+        public static final int toast_layout_root=0x7f0c0013;
         public static final int tv_followers=0x7f0c0006;
         public static final int tv_following=0x7f0c0005;
-        public static final int tv_name=0x7f0c000b;
+        public static final int tv_name=0x7f0c000c;
+        public static final int tv_noitems=0x7f0c000e;
         public static final int tv_total_tweets=0x7f0c0007;
-        public static final int tv_tweet_status=0x7f0c000c;
-        public static final int username=0x7f0c0012;
+        public static final int tv_tweet_status=0x7f0c000d;
+        public static final int username=0x7f0c0016;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -102,14 +108,16 @@ public final class R {
         public static final int app_name=0x7f080000;
         /**  notifications 
          */
-        public static final int notification_loading_items=0x7f080009;
+        public static final int notification_loading_items=0x7f08000b;
         public static final int tweets=0x7f080002;
+        public static final int warning_empty_addition=0x7f08000a;
         public static final int warning_item_deleted=0x7f080006;
         public static final int warning_item_inserted_previously=0x7f080007;
         /**  warnings 
          */
         public static final int warning_no_connection=0x7f080003;
         public static final int warning_no_data_collected=0x7f080004;
+        public static final int warning_noitems_found=0x7f080009;
         public static final int warning_noitems_present=0x7f080008;
         public static final int warning_nothingEntered=0x7f080005;
     }

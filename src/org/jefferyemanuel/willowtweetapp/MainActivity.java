@@ -9,6 +9,10 @@ import java.util.HashMap;
 
 import org.jefferyemanuel.willowtweetapp.TaskFragment.TaskCallbacks;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+
 import twitter4j.User;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -29,6 +33,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -42,15 +48,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 /*
  * the Main Activity.  Here we use twitter4j library to parse twitter JSON on a seperate thread and after successful
  * parse we set the page adapter and to each page we add a listview and set an adapter where we maniuplate each item
- * in the listview. The network processing only run on onCreate, we can move it to onresume to have it called everytime
- * we come back to the app. On my \\TODO list is to build a diskcache system  instead of LruCache for the http images or store them all in a map instead of
- * retrieving them each time from web.  
+ * in the listview. A dISKCACHE is used to store http images. two implementations of this class 1. TaskCallbacks is an 
+ * interface from TaskFragment that reports when a  AsnychTask has completed parsing twitter JSON feed and other is 
+ * for cursor loader which loads a cursor to content provider that points to list of tweeters that user entered.  
  * */
 
 public class MainActivity extends FragmentActivity implements
@@ -79,10 +86,53 @@ public class MainActivity extends FragmentActivity implements
 	ViewPager mViewPager;
 
 	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		printLog(Consts.TAG, "calling onDestroy");
+		//	threadMsg(Consts.HANDLER_REMOVE_TASK);
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		printLog(Consts.TAG, "calling onStop");
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		printLog(Consts.TAG, "calling onPause");
+		threadMsg(Consts.HANDLER_HIDE_DIALOG);
+	}
+
+	@Override
+	protected void onResumeFragments() {
+		// TODO Auto-generated method stub
+		super.onResumeFragments();
+		TaskFragment task_fragment = (TaskFragment) fm
+				.findFragmentByTag(Consts.TASK_FRAGMENT_ID);
+		printLog(Consts.TAG, "calling onResumeFragments:" + task_fragment);
+
+	}
+
+	@Override
 	protected void onResume() {
-		Utils.hideKeyboard(this);
-		printLog(Consts.TAG, "calling onResume");
 		super.onResume();
+
+		if (!isOnline())
+			createToast(this, getString(R.string.warning_no_connection));
+		else {
+			TaskFragment task_fragment = (TaskFragment) fm
+					.findFragmentByTag(Consts.TASK_FRAGMENT_ID);
+			printLog(Consts.TAG, "calling onResume:" + task_fragment);
+			if (task_fragment != null)
+				threadMsg(Consts.HANDLER_SHOW_DIALOG);
+		}
+		Utils.hideKeyboard(this);
+
 	}
 
 	@Override
@@ -101,14 +151,6 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 
 		/* log into twitter using oAUTH */
-		ConfigurationBuilder mTwitterConfigBuilder = new ConfigurationBuilder();
-		mTwitterConfigBuilder.setOAuthConsumerKey(Consts.CONSUMER_KEY);
-		mTwitterConfigBuilder
-				.setOAuthConsumerSecret(Consts.CONSUMER_SECRET_KEY);
-		mTwitterConfigBuilder.setOAuthAccessToken(Consts.ACCESS_TOKEN);
-		mTwitterConfigBuilder
-				.setOAuthAccessTokenSecret(Consts.ACCESS_TOKEN_SECRET);
-		mTwitterConfig = mTwitterConfigBuilder.build();
 
 		/* CREATE OUR DISK CACHE TO STORE IMAGES */
 		imageDiskCache = new DiskLruImageCache(this, "diskcache",
@@ -119,7 +161,7 @@ public class MainActivity extends FragmentActivity implements
 		 * send message to handler (although on UI thread already to begin
 		 * showing dialog
 		 */
-		threadMsg(Consts.HANDLER_SHOW_DIALOG);
+		//threadMsg(Consts.HANDLER_SHOW_DIALOG);
 
 		/* alloc fragment manager */
 		fm = getSupportFragmentManager();
@@ -137,18 +179,31 @@ public class MainActivity extends FragmentActivity implements
 
 	private void dismissDialog() {
 		Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-		if (prev != null) {
+		if (prev != null && prev.getActivity() != null) {
 			DialogFragment df = (DialogFragment) prev;
-			df.dismiss();
+			try {
+				df.dismiss();
+			} catch (IllegalStateException e) {
+				// TODO: handle exception
+			}
 		}
 	}
 
 	private void showDialog(String msg) {
 
 		dismissDialog();
-
 		ProgressDialogFragment dialog = ProgressDialogFragment.newInstance(msg);
 		dialog.setCancelable(false);
+
+		//-----
+		/*
+		 * FragmentTransaction ft = fm.beginTransaction();
+		 * ft.add(dialog,"dialog"); ft.commitAllowingStateLoss();
+		 */
+		//dialog.show(ft,"dialog");
+
+		//----
+
 		dialog.show(fm, "dialog");
 
 	}
@@ -167,14 +222,20 @@ public class MainActivity extends FragmentActivity implements
 		switch (item.getItemId()) {
 
 		case R.id.menu_additionbtn:
-			/*start the activity that allows users to enter in new twitter user accounts*/
+			/*
+			 * start the activity that allows users to enter in new twitter user
+			 * accounts
+			 */
 			Intent i = new Intent(this, ModifyTweetersActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(i);
 			break;
 
 		case R.id.menu_refresh_btn:
-			/*user may press refresh button, force the loader to get new data in this case*/
+			/*
+			 * user may press refresh button, force the loader to get new data
+			 * in this case
+			 */
 			printLog(Consts.TAG, "beginning refresh");
 			getSupportLoaderManager().restartLoader(Consts.LOADER_ASYNCH_ID,
 					null, this);
@@ -190,7 +251,7 @@ public class MainActivity extends FragmentActivity implements
 		return false;
 	}
 
-	/*confirms wheather the user has a network connection*/
+	/* confirms wheather the user has a network connection */
 	protected boolean isOnline() {
 		final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -201,7 +262,6 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
@@ -212,7 +272,7 @@ public class MainActivity extends FragmentActivity implements
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
-			}
+		}
 
 		@Override
 		public Fragment getItem(int position) {
@@ -252,7 +312,7 @@ public class MainActivity extends FragmentActivity implements
 		 */
 	}
 
-	public static class TweetsListFragment extends Fragment {
+	public static class TweetsListFragment extends ListFragment {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -391,7 +451,7 @@ public class MainActivity extends FragmentActivity implements
 					//DownloadImageTask.getInstance(getActivity()).loadBitmap(
 					//	avatarURL, headerImage);
 
-					/*save header image to disk cache for quick re-use*/
+					/* save header image to disk cache for quick re-use */
 					imageDiskCache.getBitmap(avatarURL, headerImage);
 				}
 			}
@@ -448,7 +508,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	/*sends a message to handler on UI thread*/
+	/* sends a message to handler on UI thread */
 	private void threadMsg(String msg) {
 
 		if (!msg.equals(null) && !msg.equals("")) {
@@ -460,8 +520,11 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	/*when the cursor completes loading the framework will not allow modifying fragments on onloadFinished, so
-	 * i've set up a handler where we can send a message to the UI handler to update the UI*/
+	/*
+	 * when the cursor completes loading the framework will not allow modifying
+	 * fragments on onloadFinished, so i've set up a handler where we can send a
+	 * message to the UI handler to update the UI
+	 */
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 
@@ -486,10 +549,11 @@ public class MainActivity extends FragmentActivity implements
 				// If the Fragment is non-null, then it is currently being
 				// retained across a configuration change.
 				if (taskFragment == null) {
+
 					printLog(TAG, "task fragment not found, invoking..");
 
 					taskFragment = TaskFragment.newInstance(mpageTitles);
-					taskFragment.setTwitterCoonfiguration(mTwitterConfig);
+					//taskFragment.setTwitterCoonfiguration(mTwitterConfig);
 					fm.beginTransaction()
 							.add(taskFragment, Consts.TASK_FRAGMENT_ID)
 							.commit();
@@ -498,14 +562,26 @@ public class MainActivity extends FragmentActivity implements
 			}
 
 			if (aResponse.equals(Consts.HANDLER_REMOVE_TASK)) {
-				
-/* pop the fragment off the fragment manager as the task has completed or has been cancelled*/
-				TaskFragment task_fragment = (TaskFragment) fm
+
+				/*
+				 * pop the fragment off the fragment manager as the task has
+				 * completed or has been cancelled
+				 */
+				TaskFragment task_fragment = (TaskFragment) getSupportFragmentManager()
 						.findFragmentByTag(Consts.TASK_FRAGMENT_ID);
 
-				if (task_fragment != null)
-					fm.beginTransaction().remove(task_fragment).commit();
+				if (task_fragment != null
+						&& task_fragment.getActivity() != null
+						&& !task_fragment.getActivity().isFinishing())
+				//	try
+				{
+					getSupportFragmentManager().beginTransaction()
+							.remove(task_fragment).commitAllowingStateLoss();
+				}
+				//catch (IllegalStateException e) {
+				//incase the activity has already been destroyed we catch the exception
 
+				//}
 			}
 
 		}
@@ -519,11 +595,13 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onProgressUpdate(int value) {
+		printLog(Consts.TAG, "calling onprogressUpdate");
 		updateProgressDialog(value);
 	}
 
 	@Override
 	public void onCancelled() {
+		printLog(Consts.TAG, "calling onCancelled");
 		threadMsg(Consts.HANDLER_HIDE_DIALOG);
 	}
 
@@ -533,13 +611,10 @@ public class MainActivity extends FragmentActivity implements
 
 		threadMsg(Consts.HANDLER_HIDE_DIALOG);
 
-		printLog(Consts.TAG,
-				"task fragment finished asynch loading.result size:"
-						+ result.size());
-
+		printLog(Consts.TAG, "calling onPostExecute from MainActivity:"
+				+ result.size() + " items");
 
 		if (result.size() > 0) {
-
 
 			/*
 			 * all done looping for one specific tweeter, lets save all that
@@ -552,7 +627,6 @@ public class MainActivity extends FragmentActivity implements
 			mSectionsPagerAdapter.notifyDataSetChanged();
 
 			mViewPager.setAdapter(mSectionsPagerAdapter); //show the viewpager finally
-
 		} else
 			createToast(this, getString(R.string.warning_no_data_collected));
 
@@ -561,23 +635,26 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		
+
 		return new CursorLoader(this, Consts.CONTENT_URI,
 				new String[] { Consts.COLUMN_USER }, null, null,
-				Consts.COLUMN_USER + " ASC");
+				Consts.COLUMN_USER + " COLLATE NOCASE ASC");
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
-		
-		/*our cursor loader has observed a change in content and notfied us of user adding new tweets to the tab,
-		 * lets contact twitter.com to get tweets for these users*/
+
+		/*
+		 * our cursor loader has observed a change in content and notfied us of
+		 * user adding new tweets to the tab, lets contact twitter.com to get
+		 * tweets for these users
+		 */
 		ArrayList<String> mUsernamesList = new ArrayList<String>();
 
 		int index = cursor.getColumnIndex(Consts.COLUMN_USER);
 		cursor.moveToFirst();
 		String username;
-		/*loop through user column from cursor and gather all user names*/
+		/* loop through user column from cursor and gather all user names */
 		while (!cursor.isAfterLast()) {
 			username = cursor.getString(index);
 			mUsernamesList.add(username);
@@ -586,11 +663,11 @@ public class MainActivity extends FragmentActivity implements
 			cursor.moveToNext();
 		}
 
-		/*store user names*/
+		/* store user names */
 		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
 
 		mSectionsPagerAdapter = new SectionsPagerAdapter(fm);
-/*notify our page adapter of the change*/
+		/* notify our page adapter of the change */
 		mSectionsPagerAdapter.notifyDataSetChanged();
 
 		/*
@@ -598,9 +675,14 @@ public class MainActivity extends FragmentActivity implements
 		 * mainUI handle and send a message
 		 */
 		threadMsg(Consts.HANDLER_HIDE_DIALOG);
-/*send a message to handler to start taskFragment which is really a asynchTask to contact Twitter.com for feeds*/
-		threadMsg(Consts.HANDLER_BEGIN_TASK);
-
+		/*
+		 * send a message to handler to start taskFragment which is really a
+		 * asynchTask to contact Twitter.com for feeds
+		 */
+		if (isOnline())
+			threadMsg(Consts.HANDLER_BEGIN_TASK);
+		else
+			createToast(this, getString(R.string.warning_no_connection));
 	}
 
 	public void setupTitles(String[] userList) {
@@ -611,8 +693,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// TODO Auto-generated method stub	
-
-		threadMsg(Consts.HANDLER_REMOVE_TASK);
 	}
 
+	
 }

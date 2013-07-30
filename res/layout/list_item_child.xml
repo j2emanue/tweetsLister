@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-had an issue with focus and onitemclick was not getting triggered for list items.
-setting descents focus to blocksDescendants
-src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-after-the-listview-is-scrolled
--->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container_list_item"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:descendantFocusability="blocksDescendants"
-    android:hapticFeedbackEnabled="true"
-    android:orientation="vertical" >
+    android:hapticFeedbackEnabled="true">
 
+    		   <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+         android:layout_marginTop="3dp"
+        android:id="@+id/adthree"    
+        />
     <ImageView
         android:id="@+id/iv_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
+	android:layout_below="@id/adthree"
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
         android:adjustViewBounds="true"
@@ -30,10 +30,12 @@ src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-a
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_avatar"
+        android:layout_below="@id/adthree"
         android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
         android:paddingBottom="15dp" >
 
+        
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
@@ -52,6 +54,8 @@ src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-a
             android:descendantFocusability="blocksDescendants"
             android:textColor="@color/grey_font"
             android:textSize="14sp" />
+          
+         
     </LinearLayout>
 
 </RelativeLayout>

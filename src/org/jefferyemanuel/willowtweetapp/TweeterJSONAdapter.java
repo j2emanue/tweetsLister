@@ -13,7 +13,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class TweeterJSONAdapter extends BaseAdapter {
 
@@ -89,6 +94,7 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		 */
 		if (getRotation(context) == Configuration.ORIENTATION_LANDSCAPE)
 			if (position % 2 == 0) {
+				
 				view.setBackgroundResource(R.color.pink);
 				tv_author.setTextColor(context.getResources()
 						.getColorStateList(R.color.white));
@@ -112,6 +118,12 @@ public class TweeterJSONAdapter extends BaseAdapter {
 
 		view.setTag(tweetMap.get(Consts.KEY_USER_OBJECT));
 
+	if(position%2==0)
+		setAdvertisment(view);
+	else
+	{ ((LinearLayout)view.findViewById(R.id.adthree)).removeAllViews();
+	
+	}
 		return view;
 
 	}
@@ -133,4 +145,31 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		}
 	}
 
+	
+	/* load ads into already inflated linear layouts */
+	public void setAdvertisment(View parent) {
+		// set up our advertisment
+		String admob_publisherID = Consts.admob_publisherID;
+
+		int[] idArray = {  R.id.adthree 
+																/* ,
+																 * R.id.adfour,
+																 * R.id.adfive,
+																 * R.id.adsix
+																 */}; //add your ads from the xml here and thats it, all done
+		int numberOfAds = idArray.length;
+
+		// Create the adView and layout arrays
+		AdRequest AD = new AdRequest();
+		AdView[] adViews = new AdView[numberOfAds];
+		LinearLayout[] adlayouts = new LinearLayout[numberOfAds];
+
+		for (int i = 0; i < numberOfAds; i++) {
+			adViews[i] = new AdView(context, AdSize.BANNER, admob_publisherID);
+			adlayouts[i] = (LinearLayout) parent.findViewById(idArray[i]);
+			adlayouts[i].addView(adViews[i]);
+			adViews[i].loadAd(AD);
+		}
+		
+	}
 }

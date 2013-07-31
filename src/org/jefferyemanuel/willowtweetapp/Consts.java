@@ -90,4 +90,6 @@ public class Consts {
 	//admob items
 	public static final String admob_publisherID = "a151f6af36e8971";
 
+	public static final String URL_TWITTER_SEARCH="https://twitter.com/search?q=";
+	
 }

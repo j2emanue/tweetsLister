@@ -3,7 +3,6 @@
     android:id="@+id/container_list_item"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:descendantFocusability="blocksDescendants"
     android:hapticFeedbackEnabled="true" >
 
     <LinearLayout
@@ -32,7 +31,6 @@
         android:layout_marginRight="5dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/cd_photo"
-        android:descendantFocusability="blocksDescendants"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -42,7 +40,6 @@
         android:layout_below="@id/container_adview"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_avatar"
-        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
         android:paddingBottom="15dp" >
 
@@ -51,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
-            android:descendantFocusability="blocksDescendants"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -60,8 +56,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
-            android:autoLink="web"
-            android:descendantFocusability="blocksDescendants"
             android:textColor="@color/grey_font"
             android:textSize="14sp" />
     </LinearLayout>

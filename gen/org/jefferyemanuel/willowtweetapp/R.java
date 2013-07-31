@@ -103,7 +103,7 @@ public final class R {
         public static final int action_clear_all=0x7f080002;
         public static final int action_settings=0x7f080001;
         public static final int app_name=0x7f080000;
-        /**  content descriptions
+        /**  content descriptions 
          */
         public static final int cd_photo=0x7f080013;
         /**  notifications 
@@ -125,7 +125,7 @@ public final class R {
         public static final int warning_noitems_found=0x7f08000a;
         public static final int warning_noitems_present=0x7f080009;
         public static final int warning_nothingEntered=0x7f080006;
-        /**  initial values for widgets
+        /**  initial values for widgets 
          */
         public static final int zerotweets=0x7f08000e;
     }

@@ -77,6 +77,13 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+    protected void onRestart() {
+        printLog(Consts.TAG, "calling onRestart");
+        super.onRestart();
+    }
+	
+	
+	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
@@ -521,9 +528,9 @@ public class MainActivity extends FragmentActivity implements
 			intent = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("https://twitter.com/"
 							+ twitterUser.getScreenName()));
-		}
+		
 		this.startActivity(intent);
-
+		}
 	}
 
 		

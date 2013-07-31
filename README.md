@@ -1,4 +1,4 @@
-twieetsLister
+tweetsLister
 =============
 
 grabs timeline tweets off twitter and puts it in a android listview.  This is an example of how a fragment can be used

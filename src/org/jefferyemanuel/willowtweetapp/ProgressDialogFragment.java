@@ -37,7 +37,7 @@ public class ProgressDialogFragment extends DialogFragment {
 		public void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
-			//setRetainInstance(true);
+			setRetainInstance(false);
 	    }
 
 	  public void setProgressOfDialog(int value){

@@ -4,11 +4,16 @@
     android:orientation="vertical" 
     >
 
-     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/adone"    
-        />
+     <com.google.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            android:id="@+id/adView_one"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ads:adSize="BANNER"
+            ads:adUnitId="a151f6af36e8971"
+            ads:loadAdOnCreate="true" 
+            />
+     
     <LinearLayout 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,7 +26,7 @@
         android:layout_marginTop="2dp"
         android:layout_gravity="center_vertical"
         android:onClick="onClick"
-        android:text="ADD"/> 
+        android:text="@string/title_addbutton"/> 
         
         
         <EditText 
@@ -39,11 +44,15 @@
    </LinearLayout>
         
     
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/adtwo"    
-        />
+     <com.google.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            android:id="@+id/adView_two"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ads:adSize="BANNER"
+            ads:adUnitId="a151f6af36e8971"
+            ads:loadAdOnCreate="true" 
+            />
     
     
        <ListView 

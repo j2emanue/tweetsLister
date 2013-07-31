@@ -4,23 +4,34 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:descendantFocusability="blocksDescendants"
-    android:hapticFeedbackEnabled="true">
+    android:hapticFeedbackEnabled="true" >
 
-    		   <LinearLayout
+    <LinearLayout
+        android:id="@+id/container_adview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-         android:layout_marginTop="3dp"
-        android:id="@+id/adthree"    
-        />
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp" >
+
+        <com.google.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            android:id="@+id/adView_three"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ads:adSize="BANNER"
+            ads:adUnitId="a151f6af36e8971"
+            ads:loadAdOnCreate="true" />
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/iv_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-	android:layout_below="@id/adthree"
         android:layout_centerVertical="true"
+        android:layout_below="@id/container_adview"
         android:layout_marginRight="5dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/cd_photo"
         android:descendantFocusability="blocksDescendants"
         android:scaleType="fitCenter" />
 
@@ -28,14 +39,13 @@
         android:id="@+id/container_tweet_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/container_adview"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_avatar"
-        android:layout_below="@id/adthree"
         android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
         android:paddingBottom="15dp" >
 
-        
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
@@ -54,8 +64,6 @@
             android:descendantFocusability="blocksDescendants"
             android:textColor="@color/grey_font"
             android:textSize="14sp" />
-          
-         
     </LinearLayout>
 
 </RelativeLayout>

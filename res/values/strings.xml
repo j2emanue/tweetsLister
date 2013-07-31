@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">Bulk TimeLines</string>
-    <string name="action_settings">Settings</string>
-    
+    <string name="action_settings">Refresh listing</string>
+    <string name="action_clear_all">Delete All Items</string> 
     
     <string name="tweets"> TWEETS</string>
     
@@ -12,29 +12,29 @@
     <string name="warning_no_connection">Your network connection might be down.  Please verify.  Unable to continue.</string>
 	<string name="warning_no_data_collected">No valid Tweets found in list or network error.</string>
      <string name="warning_nothingEntered">Enter A Twitter User name i.e @googleapps
-         or bulk inserts with comma seperated list</string>
+         or bulk inserts with comma separated list</string>
      <string name="warning_item_deleted">Item has been deleted.</string>
      <string name="warning_item_inserted_previously">Item has already exist !</string> 
      <string name="warning_noitems_present">No items have been added to the list.  Press the plus button in the action bar.</string>
      <string name="warning_noitems_found">No items found. \nhint:Try pressing the add button above to correct the user name.</string>
      <string name="warning_empty_addition">You did not enter a value. \n example input: googleapps,oprah,JLo</string>
-     
+     <string name="warning_max_apiCalls_Reached">Twitter allows 100 max refresh calls per hour. Your limit has been reached.  Try again in one hour.</string>
      
      
      <!-- notifications -->
-       <string name="notification_loading_items">Loading...</string> 
-     
-	<!-- list of all our twitters -->
-    
-    <string-array name="tweeters">
-        <item>heybluez</item>
-        <item>rockmaninoff</item>
-        <item>bsirach</item>
-        <item>willowtreeapps</item>
-        <item>jonba</item>
-        <item>richie681</item>
-    </string-array>
+       <string name="notification_loading_items">Loading&#8230;</string> 
 
-    
+       <!-- initial values for widgets-->
+       
+    <string name="zerotweets">0 Tweets</string>
+   <string name="title_refresh_listing">Refresh Listing</string>
+ <string name="title_addbutton">ADD</string>
+   <string name="title_loadtweeters">Load Tweeters</string>
+   <string name="title_addtweeter">Add Tweeter</string>
+   
+   
+   <!-- content descriptions-->
+       
+    <string name="cd_photo">A Twitter Photo</string>
     
 </resources>

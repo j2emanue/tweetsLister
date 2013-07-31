@@ -6,7 +6,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.LruCache;
+import android.support.v4.util.LruCache;
+
 
 /*a RETAINED fragment used to keep a reference to the LruCache map.  In an orientation change event this fragment will
  * retain its instance and well be able to get back the LruCache map thus preserving our cache on Activity changes */

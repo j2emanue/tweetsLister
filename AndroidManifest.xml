@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.jefferyemanuel.willowtweetapp"
-    android:versionCode="1"
+    android:versionCode="3"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
 
     <supports-screens
         android:anyDensity="true"
@@ -51,10 +51,9 @@
      		android:authorities="org.jefferyemanuel.database.TweeterContentProvider"
             android:exported="false" />
         
-         
           <activity android:name="com.google.ads.AdActivity"
               android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
-      
+   
     
         </application>
 

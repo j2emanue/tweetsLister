@@ -3,13 +3,10 @@ package org.jefferyemanuel.willowtweetapp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 
 class MyDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
@@ -21,10 +18,14 @@ class MyDialogFragment extends DialogFragment implements DialogInterface.OnClick
     }
     
     
-    public static MyDialogFragment newInstance(Context c) {
+    public static MyDialogFragment newInstance(Context c,String msg) {
  
-  
-    	return new MyDialogFragment(c);
+    	MyDialogFragment fragment=new MyDialogFragment(c);
+    	Bundle args = new Bundle();
+		args.putString(Consts.MESSAGE, msg);
+		fragment.setArguments(args);
+				
+    	return fragment;
     }
 
     

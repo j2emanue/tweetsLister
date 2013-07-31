@@ -16,10 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
-
 public class TweeterJSONAdapter extends BaseAdapter {
 
 	public TweeterJSONAdapter(FragmentActivity activity,
@@ -101,7 +97,6 @@ public class TweeterJSONAdapter extends BaseAdapter {
 
 			} else {
 				view.setBackgroundResource(R.color.white);
-				//	tv_message.setTextColor(context.getResources().getColorStateList(R.color.black));
 				tv_author.setTextColor(context.getResources()
 						.getColorStateList(R.color.blue));
 			}
@@ -118,12 +113,12 @@ public class TweeterJSONAdapter extends BaseAdapter {
 
 		view.setTag(tweetMap.get(Consts.KEY_USER_OBJECT));
 
-	if(position%2==0)
-		setAdvertisment(view);
-	else
-	{ ((LinearLayout)view.findViewById(R.id.adthree)).removeAllViews();
+	if(position%2!=0)
+		/* here we could add the adview back (if its a recycled view) but we leave it. It makes the ads disappear after a 
+		 * few scrolls so not to affect the users experience too much with ads*/	
+		((LinearLayout)view.findViewById(R.id.container_adview)).removeAllViews();
+
 	
-	}
 		return view;
 
 	}
@@ -149,14 +144,14 @@ public class TweeterJSONAdapter extends BaseAdapter {
 	/* load ads into already inflated linear layouts */
 	public void setAdvertisment(View parent) {
 		// set up our advertisment
-		String admob_publisherID = Consts.admob_publisherID;
+		/*String admob_publisherID = Consts.admob_publisherID;
 
 		int[] idArray = {  R.id.adthree 
-																/* ,
+																 ,
 																 * R.id.adfour,
 																 * R.id.adfive,
 																 * R.id.adsix
-																 */}; //add your ads from the xml here and thats it, all done
+																 }; //add your ads from the xml here and thats it, all done
 		int numberOfAds = idArray.length;
 
 		// Create the adView and layout arrays
@@ -170,6 +165,6 @@ public class TweeterJSONAdapter extends BaseAdapter {
 			adlayouts[i].addView(adViews[i]);
 			adViews[i].loadAd(AD);
 		}
-		
+		*/
 	}
 }

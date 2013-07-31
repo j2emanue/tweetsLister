@@ -36,7 +36,6 @@ public class TaskFragment extends Fragment {
 		this.twitterConfiguration = twitterConfiguration;
 	}
 
-
 	/**
 	 * Callback interface through which the fragment will report the task's
 	 * progress and results back to the Activity.
@@ -72,7 +71,8 @@ public class TaskFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		printLog(Consts.TAG,"calling TaskFraments onAttach:"+activity.getTaskId());
+		printLog(Consts.TAG,
+				"calling TaskFraments onAttach:" + activity.getTaskId());
 		try {
 			mCallbacks = (TaskCallbacks) activity;
 		} catch (ClassCastException e) {
@@ -88,10 +88,10 @@ public class TaskFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		printLog(Consts.TAG,"calling taskFragment onCreate");
+		printLog(Consts.TAG, "calling taskFragment onCreate");
 		// Retain this fragment across configuration changes.
 		setRetainInstance(true);
-		
+
 		ConfigurationBuilder mTwitterConfigBuilder = new ConfigurationBuilder();
 		mTwitterConfigBuilder.setOAuthConsumerKey(Consts.CONSUMER_KEY);
 		mTwitterConfigBuilder
@@ -101,7 +101,6 @@ public class TaskFragment extends Fragment {
 				.setOAuthAccessTokenSecret(Consts.ACCESS_TOKEN_SECRET);
 		twitterConfiguration = mTwitterConfigBuilder.build();
 
-		
 		mTask = new LongOperation();
 		mTask.execute();
 
@@ -114,7 +113,7 @@ public class TaskFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		printLog(Consts.TAG,"calling taskFragment onDetach");
+		printLog(Consts.TAG, "calling taskFragment onDetach");
 		mCallbacks = null;
 	}
 
@@ -176,6 +175,7 @@ public class TaskFragment extends Fragment {
 			HashMap<String, Object> object;
 			User user;
 			String avatar;
+			boolean stopPublishing = false;
 
 			/* define how many pages we will retrieve from twitter time line */
 			Paging pagination = new Paging(1, Consts.NUMBER_OF_STATUSES);
@@ -204,6 +204,12 @@ public class TaskFragment extends Fragment {
 					Log.w(Consts.TAG, "Error locating tweeter named:" + tweeter
 							+ " on Twitter");
 					Log.w(Consts.TAG, e.getMessage());
+					Log.w(Consts.TAG, "errorcode is: "+e.getErrorCode());
+					if (e.getErrorCode() == Consts.ERROR_CODE_RATE_LIMITED_EXCEEDED) {
+						if (!stopPublishing)
+							publishProgress(Consts.ERROR_CODE_RATE_LIMITED_EXCEEDED);
+						stopPublishing = true;
+					}
 
 					/* save a blank object to display to balance the pageviewer */
 					mTweetersObj_map.add(tweeterInfo);
@@ -267,11 +273,12 @@ public class TaskFragment extends Fragment {
 				//else
 				mTweetersObj_map.add(tweeterInfo);
 
-				int progressresult = (int) ((double) mTweetersObj_map.size()
-						/ tweeters.length * 100);
+				if (!stopPublishing) {
+					int progressresult = (int) ((double) mTweetersObj_map
+							.size() / tweeters.length * 100);
 
-				publishProgress(progressresult);
-
+					publishProgress(progressresult);
+				}
 			}//end for loop as we now have info on each tweeter
 
 			/* return the global map of tweets */
@@ -283,7 +290,7 @@ public class TaskFragment extends Fragment {
 		protected void onProgressUpdate(Integer... values) {
 			int progress = values[0];
 			if (mCallbacks != null)
-			mCallbacks.onProgressUpdate(progress);
+				mCallbacks.onProgressUpdate(progress);
 		}
 
 		@Override
@@ -291,6 +298,10 @@ public class TaskFragment extends Fragment {
 			if (mCallbacks != null) {
 				mCallbacks.onCancelled();
 			}
+			/* some error occured or user cancelled, kill this worker fragment */
+			getActivity().getSupportFragmentManager().beginTransaction()
+					.remove(TaskFragment.this).commit();
+
 		}
 
 		@Override
@@ -298,12 +309,15 @@ public class TaskFragment extends Fragment {
 				ArrayList<ArrayList<HashMap<String, Object>>> result) {
 			//super.onPostExecute(result);
 
-			if (mCallbacks != null){
-			
+			if (mCallbacks != null) {
+
 				mCallbacks.onPostExecute(result);
-			
+
 			}
-			}
+			/* task is complete, lets remove outselves from the fragment list */
+			getActivity().getSupportFragmentManager().beginTransaction()
+					.remove(TaskFragment.this).commitAllowingStateLoss();
+		}
 	}
 
 }

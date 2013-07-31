@@ -6,15 +6,18 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.util.LruCache;
 import android.widget.ImageView;
+
+/* THIS CLASS IS NOT IN USE. HERE FOR LEGACY INCASE I SWITCH OVER TO A LRUCACHE.  PLUS WE ARE ON MIN SDK 11 USING THIS 
+ * WOULD CRASH.*/
 
 /* an abstraction of a LRUCache system.  Stores images in RAM once they are initially loaded from web stream.
  * Made into a singleton to be used through the application*/
 public class DownloadImageTask {
 
-	private LruCache<String, Bitmap> mMemoryCache;
+	private android.support.v4.util.LruCache<String, Bitmap> mMemoryCache;
 	/* create a singleton class to call this from multiple classes */
 
 	private static DownloadImageTask instance = null;

@@ -10,6 +10,7 @@ import com.google.ads.AdView;
 
 import twitter4j.conf.ConfigurationBuilder;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import static org.jefferyemanuel.willowtweetapp.Utils.*;
 import android.content.ContentProviderOperation;
@@ -102,9 +103,27 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 			}
 		});
 
-	setAdvertisment();
 	}
 
+	/*pre api 14 home button is automatically enaabled.  Moving forwared we have to manually enable the button*/
+	@TargetApi(14)
+    public void enableHomeButton() {
+        if (android.os.Build.VERSION.SDK_INT >= 14) {
+            getActionBar().setHomeButtonEnabled(true);
+        }
+    }
+	
+	
+	public void 	deleteAllTweetListEntries(){
+		
+		//String where = Consts.COLUMN_USER + " = *";
+
+		int numrows = getContentResolver().delete(Consts.CONTENT_URI,
+				null, null);
+		if (numrows > 0)
+			createToast(ModifyTweetersActivity.this,getString(R.string.warning_item_deleted));
+		
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,6 +149,7 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 	    	break;
 			
 	    case R.id.action_settings:
+	    	deleteAllTweetListEntries();
 				break;
 			
 	    default:
@@ -279,31 +299,5 @@ public class ModifyTweetersActivity extends FragmentActivity implements
 	}
 
 
-	/* load ads into already inflated linear layouts */
-	public void setAdvertisment() {
-		// set up our advertisment
-		String admob_publisherID = Consts.admob_publisherID;
-
-		int[] idArray = { R.id.adone, R.id.adtwo/*, R.id.adthree 
-																 * ,
-																 * R.id.adfour,
-																 * R.id.adfive,
-																 * R.id.adsix
-																 */}; //add your ads from the xml here and thats it, all done
-		int numberOfAds = idArray.length;
-
-		// Create the adView and layout arrays
-		AdRequest AD = new AdRequest();
-		AdView[] adViews = new AdView[numberOfAds];
-		LinearLayout[] adlayouts = new LinearLayout[numberOfAds];
-
-		for (int i = 0; i < numberOfAds; i++) {
-			adViews[i] = new AdView(this, AdSize.BANNER, admob_publisherID);
-			adlayouts[i] = (LinearLayout) findViewById(idArray[i]);
-			adlayouts[i].addView(adViews[i]);
-			adViews[i].loadAd(AD);
-		}
-
-	}
-
+	
 }

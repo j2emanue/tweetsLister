@@ -5,10 +5,10 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:visible="true"
-        android:title="@string/action_settings"/>
+        android:title="@string/action_clear_all"/>
     
      <item android:id="@+id/menu_load_tweeter_btn"
         android:showAsAction="always"
-        android:title="Load Tweeters" android:icon="@drawable/bird" />
+        android:title="@string/title_loadtweeters" android:icon="@drawable/bird" />
 
 </menu>

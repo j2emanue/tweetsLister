@@ -9,11 +9,11 @@
     
      <item android:id="@+id/menu_additionbtn"
         android:showAsAction="always"
-        android:title="Add Tweeter" android:icon="@drawable/plus_sign" />
+        android:title="@string/title_addtweeter" android:icon="@drawable/plus_sign" />
 
      
       <item android:id="@+id/menu_refresh_btn"
         android:showAsAction="always"
-        android:title="refresh Listing" android:icon="@drawable/refresh" />
+        android:title="@string/title_refresh_listing" android:icon="@drawable/refresh" />
      
 </menu>

@@ -1,0 +1,29 @@
+# view land\res/layout-land/activity_main.xml #generated:14
+# view res/layout/activity_main.xml #generated:14
+-keep class android.support.v4.view.PagerTitleStrip { <init>(...); }
+
+# view land\res/layout-land/activity_main.xml #generated:1
+# view res/layout/activity_main.xml #generated:1
+-keep class android.support.v4.view.ViewPager { <init>(...); }
+
+# view AndroidManifest.xml #generated:54
+-keep class com.google.ads.AdActivity { <init>(...); }
+
+# view land\res/layout-land/list_item_child.xml #generated:20
+# view res/layout/list_item_child.xml #generated:16
+# view res/layout/modifytweeters_layout.xml #generated:47
+# view res/layout/modifytweeters_layout.xml #generated:7
+-keep class com.google.ads.AdView { <init>(...); }
+
+# view AndroidManifest.xml #generated:49
+-keep class org.jefferyemanuel.database.TweeterContentProvider { <init>(...); }
+
+# view AndroidManifest.xml #generated:29
+-keep class org.jefferyemanuel.willowtweetapp.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:42
+-keep class org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity { <init>(...); }
+
+# onClick res/layout/modifytweeters_layout.xml #generated:22
+-keepclassmembers class * { *** onClick(...); }
+

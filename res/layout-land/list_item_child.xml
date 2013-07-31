@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- had an issue with focus and onitemclick was not getting triggered for list items.
+<!--
+had an issue with focus and onitemclick was not getting triggered for list items.
 setting descents focus to blocksDescendants
-src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-after-the-listview-is-scrolled
- -->
+src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-after-the-listview-is-scrolled-->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container_list_item"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-   >
+    android:layout_height="fill_parent" >
 
-     <LinearLayout
+    <LinearLayout
+        android:id="@+id/container_adview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-         android:layout_marginTop="3dp"
-        android:id="@+id/adthree"    
-        />
-    <!-- 1dp padding in the avatar gives it the look of a border since background is set to black  -->
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp" >
+
+        <com.google.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            android:id="@+id/adView_three"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ads:adSize="BANNER"
+            ads:adUnitId="a151f6af36e8971"
+            ads:loadAdOnCreate="true" />
+    </LinearLayout>
+
+    <!-- 1dp padding in the avatar gives it the look of a border since background is set to black -->
+
+
+
     <ImageView
         android:id="@+id/iv_avatar"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="3dp"
         android:layout_marginRight="5dp"
-            android:layout_marginLeft="3dp"
+		android:layout_below="@id/container_adview"
         android:adjustViewBounds="true"
-        android:layout_below="@id/adthree"
-        android:descendantFocusability="blocksDescendants"
         android:background="@color/black"
+        android:descendantFocusability="blocksDescendants"
         android:padding="1dp"
+        android:contentDescription="@string/cd_photo"
         android:scaleType="fitCenter" />
 
     <LinearLayout
         android:id="@+id/container_tweet_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/container_adview"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_avatar"
+        android:hapticFeedbackEnabled="true"
         android:orientation="vertical"
-         android:layout_below="@id/adthree"
-        android:paddingBottom="15dp"
-        android:hapticFeedbackEnabled="true" >
+        android:paddingBottom="15dp" >
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
-            android:textColor="@color/white"
             android:descendantFocusability="blocksDescendants"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView

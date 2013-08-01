@@ -3,6 +3,7 @@ package org.jefferyemanuel.willowtweetapp;
 import static org.jefferyemanuel.willowtweetapp.Utils.printLog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -236,7 +237,8 @@ public class TaskFragment extends Fragment {
 						avatar = s.getUser().getProfileImageURL();
 
 						user = s.getUser();
-
+						
+						object.put(Consts.KEY_CREATED_DATE, s.getCreatedAt());
 						object.put(Consts.KEY_TWEET_MSG, s.getText());
 						String timePosted = s.getCreatedAt().toString();//TODO check format of date
 						object.put(Consts.KEY_TWEETDATE, timePosted);

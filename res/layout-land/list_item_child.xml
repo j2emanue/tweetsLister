@@ -78,5 +78,14 @@ src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-a
             android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
-
+<TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:textColor="@color/black"
+            android:textSize="14sp" 
+            android:layout_below="@id/container_adview"
+            android:layout_marginRight="2dp"
+            android:layout_alignParentRight="true"/>
 </RelativeLayout>

@@ -31,7 +31,8 @@ public class Consts {
 	public static final String KEY_IS_RETWEET = "isRetweet";
 	public static final String KEY_FOLLOWERS = "followers";
 	public static final String KEY_FOLLOWING = "following";
-
+	public static final String KEY_CREATED_DATE= "date_created";
+	
 	// Database table
 	public static final String TABLE_TWEETER_INFO = "tweeterinfo";
 	public static final String COLUMN_ID = "_id";

@@ -344,7 +344,7 @@ public class MainActivity extends FragmentActivity implements
 		int position;
 		String key;
 		ListView lv;
-		TweeterJSONAdapter mAdapter;
+		TweeterListAdapter mAdapter;
 
 		public static TweetsListFragment newInstance(int position) {
 			Bundle args = new Bundle();
@@ -392,7 +392,7 @@ public class MainActivity extends FragmentActivity implements
 				 */
 
 				//if(!mTweetersObj_map.get(position).isEmpty())
-				mAdapter = new TweeterJSONAdapter(
+				mAdapter = new TweeterListAdapter(
 						(FragmentActivity) getActivity(),
 						R.layout.list_item_child,
 						mTweetersObj_map.get(position), imageDiskCache);

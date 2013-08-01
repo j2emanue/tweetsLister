@@ -63,4 +63,13 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+     <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:textColor="@color/white"
+            android:textSize="12sp" 
+            android:layout_below="@id/container_adview"
+            android:layout_alignParentRight="true"/>
 </RelativeLayout>

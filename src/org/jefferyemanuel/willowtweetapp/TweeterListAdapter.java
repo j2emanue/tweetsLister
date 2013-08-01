@@ -1,8 +1,12 @@
 package org.jefferyemanuel.willowtweetapp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-
+import twitter4j.util.TimeSpanConverter;
 import twitter4j.User;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -17,9 +21,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class TweeterJSONAdapter extends BaseAdapter {
+public class TweeterListAdapter extends BaseAdapter {
 
-	public TweeterJSONAdapter(FragmentActivity activity,
+	public TweeterListAdapter(FragmentActivity activity,
 			int textViewResourceId, ArrayList<HashMap<String, Object>> objects,
 			DiskLruImageCache imageDiskCache) {
 
@@ -27,12 +31,14 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		mTweeterInfo = objects;
 		this.imageDiskCache = imageDiskCache;
 		linkifier=new Linkifier();
+		 mConverter = new TimeSpanConverter();
 		}
 
 	private ArrayList<HashMap<String, Object>> mTweeterInfo;
 	private FragmentActivity context;
 	private DiskLruImageCache imageDiskCache;
 	private Linkifier linkifier;
+	private TimeSpanConverter mConverter;	
 	
 	@Override
 	public int getCount() {
@@ -84,7 +90,7 @@ public class TweeterJSONAdapter extends BaseAdapter {
 				.findViewById(R.id.tv_tweet_status);
 		TextView tv_author = (TextView) view.findViewById(R.id.tv_name);
 		ImageView iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
-
+		TextView tv_time=(TextView)view.findViewById(R.id.tv_time);
 		/*
 		 * here we check if we are in landscape mode give another look to the
 		 * app for all odd positions, we could have also done this by inflating
@@ -117,9 +123,16 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		linkifier.setLinks(tv_message, tweet,user.getId());
 
 		
-		view.setTag(tweetMap.get(Consts.KEY_USER_OBJECT));
 
-	if(position%2!=0)
+	     String time=formatDate((Date)tweetMap.get(Consts.KEY_CREATED_DATE));
+		tv_time.setText(time);
+	     
+		
+		
+		view.setTag(tweetMap.get(Consts.KEY_USER_OBJECT));
+		
+		
+     if(position%2!=0)
 		/* here we could add the adview back (if its a recycled view) but we leave it. It makes the ads disappear after a 
 		 * few scrolls so not to affect the users experience too much with ads*/	
 		((LinearLayout)view.findViewById(R.id.container_adview)).removeAllViews();
@@ -128,7 +141,7 @@ public class TweeterJSONAdapter extends BaseAdapter {
 	}
 
 	/* returns orientation of device */
-	public int getRotation(Context context) {
+	private int getRotation(Context context) {
 		final int rotation = ((WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
 				.getRotation();
@@ -144,4 +157,15 @@ public class TweeterJSONAdapter extends BaseAdapter {
 		}
 	}
 	
+/*converts standard date to user readable date such as 5m ago, 30 mins ago, 1 hr ago etc*/
+private String formatDate(Date create_date){
+	//twitter date format from json response:  Wed Jul 31 13:15:10 EDT 2013
+
+	if(create_date==null)
+		return "";
+	 
+	return mConverter.toTimeSpanString(create_date);
+	
+}
+
 }

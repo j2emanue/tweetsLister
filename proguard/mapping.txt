@@ -6010,37 +6010,38 @@ org.jefferyemanuel.willowtweetapp.Consts -> org.jefferyemanuel.willowtweetapp.b:
     java.lang.String KEY_IS_RETWEET -> l
     java.lang.String KEY_FOLLOWERS -> m
     java.lang.String KEY_FOLLOWING -> n
-    java.lang.String TABLE_TWEETER_INFO -> o
-    java.lang.String COLUMN_ID -> p
-    java.lang.String COLUMN_USER -> q
-    java.lang.String DATABASE_NAME -> r
-    java.lang.String AUTHORITY -> s
-    int DATABASE_VERSION -> t
-    android.net.Uri CONTENT_URI -> u
-    int LOADER_ID -> v
-    int LOADER_ASYNCH_ID -> w
-    java.lang.String MESSAGE -> x
-    java.lang.String TASK_FRAGMENT_ID -> y
-    java.lang.String TASK_ARGUMENT_USERLIST -> z
-    java.lang.String CONSUMER_KEY -> A
-    java.lang.String CONSUMER_SECRET_KEY -> B
-    java.lang.String ACCESS_TOKEN -> C
-    java.lang.String ACCESS_TOKEN_SECRET -> D
-    java.lang.String CALLBACKURL -> E
-    java.lang.String URL_REQUEST_TOKEN -> F
-    java.lang.String URL_ACCESS_TOKEN -> G
-    java.lang.String URL_AUTHORIZE -> H
-    java.lang.String HANDLER_SHOW_DIALOG -> I
-    java.lang.String HANDLER_HIDE_DIALOG -> J
-    java.lang.String HANDLER_REMOVE_TASK -> K
-    java.lang.String HANDLER_BEGIN_TASK -> L
-    int NUMBER_OF_STATUSES -> M
-    int IO_BUFFER_SIZE -> N
-    int DISK_CACHE_SIZE -> O
-    int COMPRESS_QUALITY -> P
-    int ERROR_CODE_RATE_LIMITED_EXCEEDED -> Q
-    java.lang.String admob_publisherID -> R
-    java.lang.String URL_TWITTER_SEARCH -> S
+    java.lang.String KEY_CREATED_DATE -> o
+    java.lang.String TABLE_TWEETER_INFO -> p
+    java.lang.String COLUMN_ID -> q
+    java.lang.String COLUMN_USER -> r
+    java.lang.String DATABASE_NAME -> s
+    java.lang.String AUTHORITY -> t
+    int DATABASE_VERSION -> u
+    android.net.Uri CONTENT_URI -> v
+    int LOADER_ID -> w
+    int LOADER_ASYNCH_ID -> x
+    java.lang.String MESSAGE -> y
+    java.lang.String TASK_FRAGMENT_ID -> z
+    java.lang.String TASK_ARGUMENT_USERLIST -> A
+    java.lang.String CONSUMER_KEY -> B
+    java.lang.String CONSUMER_SECRET_KEY -> C
+    java.lang.String ACCESS_TOKEN -> D
+    java.lang.String ACCESS_TOKEN_SECRET -> E
+    java.lang.String CALLBACKURL -> F
+    java.lang.String URL_REQUEST_TOKEN -> G
+    java.lang.String URL_ACCESS_TOKEN -> H
+    java.lang.String URL_AUTHORIZE -> I
+    java.lang.String HANDLER_SHOW_DIALOG -> J
+    java.lang.String HANDLER_HIDE_DIALOG -> K
+    java.lang.String HANDLER_REMOVE_TASK -> L
+    java.lang.String HANDLER_BEGIN_TASK -> M
+    int NUMBER_OF_STATUSES -> N
+    int IO_BUFFER_SIZE -> O
+    int DISK_CACHE_SIZE -> P
+    int COMPRESS_QUALITY -> Q
+    int ERROR_CODE_RATE_LIMITED_EXCEEDED -> R
+    java.lang.String admob_publisherID -> S
+    java.lang.String URL_TWITTER_SEARCH -> T
 org.jefferyemanuel.willowtweetapp.DiskLruImageCache -> org.jefferyemanuel.willowtweetapp.c:
     com.jakewharton.disklrucache.DiskLruCache mDiskCache -> a
     android.graphics.Bitmap$CompressFormat mCompressFormat -> b
@@ -6148,7 +6149,7 @@ org.jefferyemanuel.willowtweetapp.MainActivity$TweetsListFragment -> org.jeffery
     int position -> m
     java.lang.String key -> ai
     android.widget.ListView lv -> aj
-    org.jefferyemanuel.willowtweetapp.TweeterJSONAdapter mAdapter -> ak
+    org.jefferyemanuel.willowtweetapp.TweeterListAdapter mAdapter -> ak
     org.jefferyemanuel.willowtweetapp.MainActivity$TweetsListFragment newInstance(int) -> d
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
     void onActivityCreated(android.os.Bundle) -> d
@@ -6260,6 +6261,7 @@ org.jefferyemanuel.willowtweetapp.R$id -> org.jefferyemanuel.willowtweetapp.y:
     int tv_following -> tv_following
     int tv_name -> tv_name
     int tv_noitems -> tv_noitems
+    int tv_time -> tv_time
     int tv_total_tweets -> tv_total_tweets
     int tv_tweet_status -> tv_tweet_status
     int username -> username
@@ -6334,34 +6336,20 @@ org.jefferyemanuel.willowtweetapp.TaskFragment$TaskCallbacks -> org.jefferyemanu
     void onProgressUpdate(int) -> a
     void onCancelled() -> k
     void onPostExecute(java.util.ArrayList) -> a
-org.jefferyemanuel.willowtweetapp.TweeterJSONAdapter -> org.jefferyemanuel.willowtweetapp.ai:
+org.jefferyemanuel.willowtweetapp.TweeterListAdapter -> org.jefferyemanuel.willowtweetapp.ai:
     java.util.ArrayList mTweeterInfo -> a
     android.support.v4.app.FragmentActivity context -> b
     org.jefferyemanuel.willowtweetapp.DiskLruImageCache imageDiskCache -> c
     org.jefferyemanuel.willowtweetapp.Linkifier linkifier -> d
+    twitter4j.util.TimeSpanConverter mConverter -> e
     int getCount() -> getCount
     java.util.HashMap getItem(int) -> a
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     int getRotation(android.content.Context) -> a
+    java.lang.String formatDate(java.util.Date) -> a
     java.lang.Object getItem(int) -> getItem
-org.jefferyemanuel.willowtweetapp.TweeterUsersLoader -> org.jefferyemanuel.willowtweetapp.aj:
-    java.util.ArrayList mResults -> h
-    twitter4j.conf.ConfigurationBuilder cb -> i
-    twitter4j.Twitter twitter -> j
-    java.util.ArrayList mTweetersObj_map -> k
-    java.lang.String[] tweeters -> l
-    java.lang.String[] getTweeters() -> g
-    void setTweeters(java.lang.String[]) -> a
-    void onStartLoading() -> h
-    java.util.ArrayList loadInBackground() -> k
-    void deliverResult(java.util.ArrayList) -> a
-    void onReset() -> j
-    void onCanceled(java.util.ArrayList) -> b
-    void onCanceled(java.lang.Object) -> a
-    void deliverResult(java.lang.Object) -> b
-    java.lang.Object loadInBackground() -> d
-org.jefferyemanuel.willowtweetapp.Utils -> org.jefferyemanuel.willowtweetapp.ak:
+org.jefferyemanuel.willowtweetapp.Utils -> org.jefferyemanuel.willowtweetapp.aj:
     void printLog(java.lang.String,java.lang.String) -> a
     void hideKeyboard(android.app.Activity) -> a
     void createToast(android.content.Context,java.lang.String) -> a

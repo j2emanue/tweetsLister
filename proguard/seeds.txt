@@ -214,6 +214,7 @@ org.jefferyemanuel.willowtweetapp.R$id: int tv_followers
 org.jefferyemanuel.willowtweetapp.R$id: int tv_following
 org.jefferyemanuel.willowtweetapp.R$id: int tv_name
 org.jefferyemanuel.willowtweetapp.R$id: int tv_noitems
+org.jefferyemanuel.willowtweetapp.R$id: int tv_time
 org.jefferyemanuel.willowtweetapp.R$id: int tv_total_tweets
 org.jefferyemanuel.willowtweetapp.R$id: int tv_tweet_status
 org.jefferyemanuel.willowtweetapp.R$id: int username

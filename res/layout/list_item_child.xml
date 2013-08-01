@@ -3,7 +3,10 @@
     android:id="@+id/container_list_item"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
     android:hapticFeedbackEnabled="true" >
+
+    <!-- blocks descendants added to conteract adview trying to take focus thus preventing row click events -->
 
     <LinearLayout
         android:id="@+id/container_adview"
@@ -15,8 +18,8 @@
         <com.google.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
             android:id="@+id/adView_three"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="a151f6af36e8971"
             ads:loadAdOnCreate="true" />
@@ -26,8 +29,8 @@
         android:id="@+id/iv_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_centerVertical="true"
         android:layout_below="@id/container_adview"
+        android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/cd_photo"

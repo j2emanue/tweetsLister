@@ -364,7 +364,8 @@ public class MainActivity extends FragmentActivity implements
 			View rootView = inflater
 					.inflate(R.layout.listfragment_layout, null);
 			lv = (ListView) rootView.findViewById(android.R.id.list);
-			lv.setOnItemClickListener((OnItemClickListener) getActivity());
+			//lv=this.getListView();
+			
 			return rootView; //You must return your view here
 		}
 
@@ -372,7 +373,9 @@ public class MainActivity extends FragmentActivity implements
 		public void onActivityCreated(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onActivityCreated(savedInstanceState);
-
+			
+			lv.setOnItemClickListener((OnItemClickListener) getActivity());
+			
 			printLog(Consts.TAG_FRAGMENT, "OnActivityCreated called");
 
 			Bundle args = this.getArguments();
@@ -515,7 +518,9 @@ public class MainActivity extends FragmentActivity implements
 		 * use this user info here.
 		 */
 		User twitterUser = (User) view.getTag();
-
+		
+		printLog(Consts.TAG,"list item clicked");
+		
 		try {
 			intent = new Intent(Intent.ACTION_VIEW);
 			intent.setClassName("com.twitter.android",

@@ -6040,6 +6040,7 @@ org.jefferyemanuel.willowtweetapp.Consts -> org.jefferyemanuel.willowtweetapp.b:
     int COMPRESS_QUALITY -> P
     int ERROR_CODE_RATE_LIMITED_EXCEEDED -> Q
     java.lang.String admob_publisherID -> R
+    java.lang.String URL_TWITTER_SEARCH -> S
 org.jefferyemanuel.willowtweetapp.DiskLruImageCache -> org.jefferyemanuel.willowtweetapp.c:
     com.jakewharton.disklrucache.DiskLruCache mDiskCache -> a
     android.graphics.Bitmap$CompressFormat mCompressFormat -> b
@@ -6086,31 +6087,40 @@ org.jefferyemanuel.willowtweetapp.DownloadImageTask$DownloadImageTaskViaWeb -> o
     void onPostExecute(android.graphics.Bitmap) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+org.jefferyemanuel.willowtweetapp.Linkifier -> org.jefferyemanuel.willowtweetapp.i:
+    android.widget.TextView setLinks(android.widget.TextView,java.lang.String,long) -> a
+org.jefferyemanuel.willowtweetapp.Linkifier$InternalURLSpan -> org.jefferyemanuel.willowtweetapp.j:
+    java.lang.String text -> a
+    long twitterId -> b
+    org.jefferyemanuel.willowtweetapp.Linkifier this$0 -> c
+    void onClick(android.view.View) -> onClick
+    void handleLinkClicked(android.content.Context,java.lang.String) -> a
 org.jefferyemanuel.willowtweetapp.MainActivity -> org.jefferyemanuel.willowtweetapp.MainActivity:
     org.jefferyemanuel.willowtweetapp.MainActivity$SectionsPagerAdapter mSectionsPagerAdapter -> u
     org.jefferyemanuel.willowtweetapp.DiskLruImageCache imageDiskCache -> v
     java.text.NumberFormat nf -> w
-    twitter4j.conf.Configuration mTwitterConfig -> x
     android.support.v4.app.FragmentManager fm -> q
     java.util.ArrayList mTweetersObj_map -> r
     java.lang.String[] mpageTitles -> s
     android.support.v4.view.ViewPager mViewPager -> t
-    android.os.Handler handler -> y
+    android.os.Handler handler -> x
     void onDestroy() -> onDestroy
+    void onRestart() -> onRestart
     void onStop() -> onStop
     void onPause() -> onPause
     void onResumeFragments() -> a
     void onResume() -> onResume
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    void dismissDialog() -> n
-    void showDialog(java.lang.String) -> c
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void createWarningDialog(java.lang.String) -> b
+    void dismissProgressDialog() -> n
+    void showProgressDialog(java.lang.String) -> c
     void reStartLoader() -> h
     void updateProgressDialog(int) -> b
-    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     boolean isOnline() -> i
+    void setupTitles(java.lang.String[]) -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    void createWarningDialog(java.lang.String) -> b
     void threadMsg(java.lang.String) -> d
     void onPreExecute() -> j
     void onProgressUpdate(int) -> a
@@ -6118,23 +6128,22 @@ org.jefferyemanuel.willowtweetapp.MainActivity -> org.jefferyemanuel.willowtweet
     void onPostExecute(java.util.ArrayList) -> a
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
     void onLoadFinished(android.support.v4.content.Loader,android.database.Cursor) -> a
-    void setupTitles(java.lang.String[]) -> a
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
     void access$1(org.jefferyemanuel.willowtweetapp.MainActivity,java.lang.String) -> a
     void access$2(org.jefferyemanuel.willowtweetapp.MainActivity) -> a
     org.jefferyemanuel.willowtweetapp.DiskLruImageCache access$3() -> l
     java.text.NumberFormat access$4() -> m
-org.jefferyemanuel.willowtweetapp.MainActivity$1 -> org.jefferyemanuel.willowtweetapp.i:
+org.jefferyemanuel.willowtweetapp.MainActivity$1 -> org.jefferyemanuel.willowtweetapp.k:
     org.jefferyemanuel.willowtweetapp.MainActivity this$0 -> a
     void handleMessage(android.os.Message) -> handleMessage
-org.jefferyemanuel.willowtweetapp.MainActivity$SectionsPagerAdapter -> org.jefferyemanuel.willowtweetapp.j:
+org.jefferyemanuel.willowtweetapp.MainActivity$SectionsPagerAdapter -> org.jefferyemanuel.willowtweetapp.l:
     org.jefferyemanuel.willowtweetapp.MainActivity this$0 -> c
     android.support.v4.app.Fragment getItem(int) -> a
     int getItemPosition(java.lang.Object) -> a
     int getCount() -> b
     java.lang.CharSequence getPageTitle(int) -> c
-org.jefferyemanuel.willowtweetapp.MainActivity$TweetsListFragment -> org.jefferyemanuel.willowtweetapp.k:
+org.jefferyemanuel.willowtweetapp.MainActivity$TweetsListFragment -> org.jefferyemanuel.willowtweetapp.m:
     java.lang.String ARG_SECTION_NUMBER -> l
     int position -> m
     java.lang.String key -> ai
@@ -6167,19 +6176,19 @@ org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity -> org.jefferyemanuel.w
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onClick(android.view.View) -> onClick
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity$1 -> org.jefferyemanuel.willowtweetapp.l:
+org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity$1 -> org.jefferyemanuel.willowtweetapp.n:
     org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity this$0 -> a
     void onLoadComplete(android.media.SoundPool,int,int) -> onLoadComplete
-org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity$2 -> org.jefferyemanuel.willowtweetapp.m:
+org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity$2 -> org.jefferyemanuel.willowtweetapp.o:
     org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-org.jefferyemanuel.willowtweetapp.MyDialogFragment -> org.jefferyemanuel.willowtweetapp.n:
+org.jefferyemanuel.willowtweetapp.MyDialogFragment -> org.jefferyemanuel.willowtweetapp.p:
     android.content.Context mContext -> ai
     org.jefferyemanuel.willowtweetapp.MyDialogFragment newInstance(android.content.Context,java.lang.String) -> b
     void onCreate(android.os.Bundle) -> a
     android.app.Dialog onCreateDialog(android.os.Bundle) -> c
     void onClick(android.content.DialogInterface,int) -> onClick
-org.jefferyemanuel.willowtweetapp.ProgressDialogFragment -> org.jefferyemanuel.willowtweetapp.o:
+org.jefferyemanuel.willowtweetapp.ProgressDialogFragment -> org.jefferyemanuel.willowtweetapp.q:
     java.lang.String ARG_MESSAGE -> ai
     android.app.ProgressDialog dialog -> aj
     org.jefferyemanuel.willowtweetapp.ProgressDialogFragment newInstance(java.lang.String) -> b
@@ -6187,15 +6196,15 @@ org.jefferyemanuel.willowtweetapp.ProgressDialogFragment -> org.jefferyemanuel.w
     void onCreate(android.os.Bundle) -> a
     void setProgressOfDialog(int) -> c
     android.app.Dialog onCreateDialog(android.os.Bundle) -> c
-org.jefferyemanuel.willowtweetapp.ProgressDialogFragment$1 -> org.jefferyemanuel.willowtweetapp.p:
+org.jefferyemanuel.willowtweetapp.ProgressDialogFragment$1 -> org.jefferyemanuel.willowtweetapp.r:
     org.jefferyemanuel.willowtweetapp.ProgressDialogFragment this$0 -> a
     boolean onKey(android.content.DialogInterface,int,android.view.KeyEvent) -> onKey
-org.jefferyemanuel.willowtweetapp.R -> org.jefferyemanuel.willowtweetapp.q:
-org.jefferyemanuel.willowtweetapp.R$anim -> org.jefferyemanuel.willowtweetapp.r:
+org.jefferyemanuel.willowtweetapp.R -> org.jefferyemanuel.willowtweetapp.s:
+org.jefferyemanuel.willowtweetapp.R$anim -> org.jefferyemanuel.willowtweetapp.t:
     int slide -> slide
     int slide_out -> slide_out
-org.jefferyemanuel.willowtweetapp.R$attr -> org.jefferyemanuel.willowtweetapp.s:
-org.jefferyemanuel.willowtweetapp.R$color -> org.jefferyemanuel.willowtweetapp.t:
+org.jefferyemanuel.willowtweetapp.R$attr -> org.jefferyemanuel.willowtweetapp.u:
+org.jefferyemanuel.willowtweetapp.R$color -> org.jefferyemanuel.willowtweetapp.v:
     int black -> black
     int blue -> blue
     int crystal_blue -> crystal_blue
@@ -6211,10 +6220,10 @@ org.jefferyemanuel.willowtweetapp.R$color -> org.jefferyemanuel.willowtweetapp.t
     int text_shadow_white -> text_shadow_white
     int translucent_red -> translucent_red
     int white -> white
-org.jefferyemanuel.willowtweetapp.R$dimen -> org.jefferyemanuel.willowtweetapp.u:
+org.jefferyemanuel.willowtweetapp.R$dimen -> org.jefferyemanuel.willowtweetapp.w:
     int activity_horizontal_margin -> activity_horizontal_margin
     int activity_vertical_margin -> activity_vertical_margin
-org.jefferyemanuel.willowtweetapp.R$drawable -> org.jefferyemanuel.willowtweetapp.v:
+org.jefferyemanuel.willowtweetapp.R$drawable -> org.jefferyemanuel.willowtweetapp.x:
     int bird -> bird
     int border -> border
     int bubble -> bubble
@@ -6225,7 +6234,7 @@ org.jefferyemanuel.willowtweetapp.R$drawable -> org.jefferyemanuel.willowtweetap
     int rounded_corners -> rounded_corners
     int spinning_loader -> spinning_loader
     int stickmanpointing -> stickmanpointing
-org.jefferyemanuel.willowtweetapp.R$id -> org.jefferyemanuel.willowtweetapp.w:
+org.jefferyemanuel.willowtweetapp.R$id -> org.jefferyemanuel.willowtweetapp.y:
     int action_settings -> action_settings
     int adView_one -> adView_one
     int adView_three -> adView_three
@@ -6254,7 +6263,7 @@ org.jefferyemanuel.willowtweetapp.R$id -> org.jefferyemanuel.willowtweetapp.w:
     int tv_total_tweets -> tv_total_tweets
     int tv_tweet_status -> tv_tweet_status
     int username -> username
-org.jefferyemanuel.willowtweetapp.R$layout -> org.jefferyemanuel.willowtweetapp.x:
+org.jefferyemanuel.willowtweetapp.R$layout -> org.jefferyemanuel.willowtweetapp.z:
     int activity_main -> activity_main
     int list_header -> list_header
     int list_item_child -> list_item_child
@@ -6262,12 +6271,12 @@ org.jefferyemanuel.willowtweetapp.R$layout -> org.jefferyemanuel.willowtweetapp.
     int modifytweeters_layout -> modifytweeters_layout
     int toast_layout -> toast_layout
     int tweeter_list_row_item -> tweeter_list_row_item
-org.jefferyemanuel.willowtweetapp.R$menu -> org.jefferyemanuel.willowtweetapp.y:
+org.jefferyemanuel.willowtweetapp.R$menu -> org.jefferyemanuel.willowtweetapp.aa:
     int main -> main
     int tweeterlist_menu -> tweeterlist_menu
-org.jefferyemanuel.willowtweetapp.R$raw -> org.jefferyemanuel.willowtweetapp.z:
+org.jefferyemanuel.willowtweetapp.R$raw -> org.jefferyemanuel.willowtweetapp.ab:
     int logosound -> logosound
-org.jefferyemanuel.willowtweetapp.R$string -> org.jefferyemanuel.willowtweetapp.aa:
+org.jefferyemanuel.willowtweetapp.R$string -> org.jefferyemanuel.willowtweetapp.ac:
     int action_clear_all -> action_clear_all
     int action_settings -> action_settings
     int app_name -> app_name
@@ -6288,15 +6297,15 @@ org.jefferyemanuel.willowtweetapp.R$string -> org.jefferyemanuel.willowtweetapp.
     int warning_noitems_present -> warning_noitems_present
     int warning_nothingEntered -> warning_nothingEntered
     int zerotweets -> zerotweets
-org.jefferyemanuel.willowtweetapp.R$style -> org.jefferyemanuel.willowtweetapp.ab:
+org.jefferyemanuel.willowtweetapp.R$style -> org.jefferyemanuel.willowtweetapp.ad:
     int AppBaseTheme -> AppBaseTheme
     int AppTheme -> AppTheme
-org.jefferyemanuel.willowtweetapp.RetainFragment -> org.jefferyemanuel.willowtweetapp.ac:
+org.jefferyemanuel.willowtweetapp.RetainFragment -> org.jefferyemanuel.willowtweetapp.ae:
     java.lang.String TAG -> b
     android.support.v4.util.LruCache mRetainedCache -> a
     org.jefferyemanuel.willowtweetapp.RetainFragment findOrCreateRetainFragment(android.app.FragmentManager) -> a
     void onCreate(android.os.Bundle) -> onCreate
-org.jefferyemanuel.willowtweetapp.TaskFragment -> org.jefferyemanuel.willowtweetapp.ad:
+org.jefferyemanuel.willowtweetapp.TaskFragment -> org.jefferyemanuel.willowtweetapp.af:
     twitter4j.conf.Configuration twitterConfiguration -> a
     org.jefferyemanuel.willowtweetapp.TaskFragment$TaskCallbacks mCallbacks -> b
     org.jefferyemanuel.willowtweetapp.TaskFragment$LongOperation mTask -> c
@@ -6307,7 +6316,7 @@ org.jefferyemanuel.willowtweetapp.TaskFragment -> org.jefferyemanuel.willowtweet
     void onCreate(android.os.Bundle) -> a
     void onDetach() -> g
     org.jefferyemanuel.willowtweetapp.TaskFragment$TaskCallbacks access$0(org.jefferyemanuel.willowtweetapp.TaskFragment) -> a
-org.jefferyemanuel.willowtweetapp.TaskFragment$LongOperation -> org.jefferyemanuel.willowtweetapp.ae:
+org.jefferyemanuel.willowtweetapp.TaskFragment$LongOperation -> org.jefferyemanuel.willowtweetapp.ag:
     twitter4j.Twitter twitter -> a
     java.util.ArrayList mTweetersObj_map -> b
     java.lang.String[] tweeters -> c
@@ -6320,23 +6329,23 @@ org.jefferyemanuel.willowtweetapp.TaskFragment$LongOperation -> org.jefferyemanu
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
     void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-org.jefferyemanuel.willowtweetapp.TaskFragment$TaskCallbacks -> org.jefferyemanuel.willowtweetapp.af:
+org.jefferyemanuel.willowtweetapp.TaskFragment$TaskCallbacks -> org.jefferyemanuel.willowtweetapp.ah:
     void onPreExecute() -> j
     void onProgressUpdate(int) -> a
     void onCancelled() -> k
     void onPostExecute(java.util.ArrayList) -> a
-org.jefferyemanuel.willowtweetapp.TweeterJSONAdapter -> org.jefferyemanuel.willowtweetapp.ag:
+org.jefferyemanuel.willowtweetapp.TweeterJSONAdapter -> org.jefferyemanuel.willowtweetapp.ai:
     java.util.ArrayList mTweeterInfo -> a
     android.support.v4.app.FragmentActivity context -> b
     org.jefferyemanuel.willowtweetapp.DiskLruImageCache imageDiskCache -> c
+    org.jefferyemanuel.willowtweetapp.Linkifier linkifier -> d
     int getCount() -> getCount
     java.util.HashMap getItem(int) -> a
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     int getRotation(android.content.Context) -> a
-    void setAdvertisment(android.view.View) -> a
     java.lang.Object getItem(int) -> getItem
-org.jefferyemanuel.willowtweetapp.TweeterUsersLoader -> org.jefferyemanuel.willowtweetapp.ah:
+org.jefferyemanuel.willowtweetapp.TweeterUsersLoader -> org.jefferyemanuel.willowtweetapp.aj:
     java.util.ArrayList mResults -> h
     twitter4j.conf.ConfigurationBuilder cb -> i
     twitter4j.Twitter twitter -> j
@@ -6352,7 +6361,7 @@ org.jefferyemanuel.willowtweetapp.TweeterUsersLoader -> org.jefferyemanuel.willo
     void onCanceled(java.lang.Object) -> a
     void deliverResult(java.lang.Object) -> b
     java.lang.Object loadInBackground() -> d
-org.jefferyemanuel.willowtweetapp.Utils -> org.jefferyemanuel.willowtweetapp.ai:
+org.jefferyemanuel.willowtweetapp.Utils -> org.jefferyemanuel.willowtweetapp.ak:
     void printLog(java.lang.String,java.lang.String) -> a
     void hideKeyboard(android.app.Activity) -> a
     void createToast(android.content.Context,java.lang.String) -> a

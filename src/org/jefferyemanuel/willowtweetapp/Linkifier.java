@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -36,10 +37,11 @@ public class Linkifier {
 						android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 				tv.setText(f);
 				// tv.setOnLongClickListener(span.l);
-
+			
 			}
 		}
-		tv.setLinkTextColor(Color.BLUE);
+		tv.setLinkTextColor(tv.getContext().getResources()
+				.getColorStateList(R.color.crystal_blue));
 		tv.setLinksClickable(true);
 		tv.setMovementMethod(LinkMovementMethod.getInstance());
 		tv.setFocusable(false);

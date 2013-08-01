@@ -153,6 +153,7 @@ com.google.ads.util.g$a$5: void onClick(android.content.DialogInterface,int)
 com.google.ads.util.g$a$6: void onClick(android.content.DialogInterface,int)
 org.jefferyemanuel.database.TweeterContentProvider
 org.jefferyemanuel.database.TweeterContentProvider: TweeterContentProvider()
+org.jefferyemanuel.willowtweetapp.Linkifier$InternalURLSpan: void onClick(android.view.View)
 org.jefferyemanuel.willowtweetapp.MainActivity
 org.jefferyemanuel.willowtweetapp.MainActivity: MainActivity()
 org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity

@@ -9,8 +9,8 @@
 # view AndroidManifest.xml #generated:54
 -keep class com.google.ads.AdActivity { <init>(...); }
 
-# view land\res/layout-land/list_item_child.xml #generated:20
-# view res/layout/list_item_child.xml #generated:15
+# view land\res/layout-land/list_item_child.xml #generated:22
+# view res/layout/list_item_child.xml #generated:18
 # view res/layout/modifytweeters_layout.xml #generated:47
 # view res/layout/modifytweeters_layout.xml #generated:7
 -keep class com.google.ads.AdView { <init>(...); }

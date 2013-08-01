@@ -15,7 +15,7 @@ public class Consts {
 	}
 
 	//developer and logging options
-	public static final boolean DEVELOPER_MODE = true;
+	public static final boolean DEVELOPER_MODE =false;
 	public static final String TAG = "willowtweet";
 	public static final String TAG_FRAGMENT = "fragments";
 

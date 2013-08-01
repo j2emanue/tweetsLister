@@ -8,7 +8,9 @@ src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-a
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container_list_item"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:hapticFeedbackEnabled="true" >
 
     <LinearLayout
         android:id="@+id/container_adview"
@@ -20,8 +22,8 @@ src: http://stackoverflow.com/questions/12863662/convertview-loses-onitemclick-a
         <com.google.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
             android:id="@+id/adView_three"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="a151f6af36e8971"
             ads:loadAdOnCreate="true" />

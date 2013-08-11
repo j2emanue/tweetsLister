@@ -10,9 +10,9 @@
 -keep class com.google.ads.AdActivity { <init>(...); }
 
 # view land\res/layout-land/list_item_child.xml #generated:22
-# view res/layout/list_item_child.xml #generated:18
-# view res/layout/modifytweeters_layout.xml #generated:47
-# view res/layout/modifytweeters_layout.xml #generated:7
+# view res/layout/list_item_child.xml #generated:20
+# view res/layout/modifytweeters_layout.xml #generated:48
+# view res/layout/modifytweeters_layout.xml #generated:8
 -keep class com.google.ads.AdView { <init>(...); }
 
 # view AndroidManifest.xml #generated:49
@@ -24,6 +24,6 @@
 # view AndroidManifest.xml #generated:42
 -keep class org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity { <init>(...); }
 
-# onClick res/layout/modifytweeters_layout.xml #generated:22
+# onClick res/layout/modifytweeters_layout.xml #generated:23
 -keepclassmembers class * { *** onClick(...); }
 

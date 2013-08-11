@@ -6,14 +6,16 @@
     android:descendantFocusability="blocksDescendants"
     android:hapticFeedbackEnabled="true" >
 
-    <!-- blocks descendants added to conteract adview trying to take focus thus preventing row click events -->
+    <!-- android:descendantFocusability="blocksDescendants" blocks descendants added to conteract adview trying to take focus thus preventing row click events -->
 
     <LinearLayout
         android:id="@+id/container_adview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp" >
+        android:layout_marginTop="2dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
 
         <com.google.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
@@ -22,7 +24,9 @@
             android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="a151f6af36e8971"
-            ads:loadAdOnCreate="true" />
+            ads:loadAdOnCreate="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
     </LinearLayout>
 
     <ImageView
@@ -43,6 +47,7 @@
         android:layout_below="@id/container_adview"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_avatar"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
         android:paddingBottom="15dp" >
 
@@ -63,13 +68,14 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-     <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:textColor="@color/white"
-            android:textSize="12sp" 
-            android:layout_below="@id/container_adview"
-            android:layout_alignParentRight="true"/>
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/container_adview"
+        android:layout_marginLeft="25dp"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
 </RelativeLayout>

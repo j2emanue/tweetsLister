@@ -44,8 +44,8 @@ public class Linkifier {
 				.getColorStateList(R.color.crystal_blue));
 		tv.setLinksClickable(true);
 		tv.setMovementMethod(LinkMovementMethod.getInstance());
-		tv.setFocusable(false);
-
+		//tv.setFocusable(false);
+//tv.setFocusableInTouchMode(false);
 		return tv;
 	}
 

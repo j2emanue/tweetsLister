@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" 
+    android:background="@drawable/bg"
     >
 
      <com.google.ads.AdView
@@ -63,7 +64,7 @@
         android:divider="@color/light_font"
         android:drawSelectorOnTop="false"
    	 	android:dividerHeight="1.0sp"
-   	 	android:background="@drawable/listshape"
+   	 	
    	 	 />
     
  

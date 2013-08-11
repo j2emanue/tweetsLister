@@ -179,11 +179,13 @@ org.jefferyemanuel.willowtweetapp.R$color: int translucent_red
 org.jefferyemanuel.willowtweetapp.R$color: int white
 org.jefferyemanuel.willowtweetapp.R$dimen: int activity_horizontal_margin
 org.jefferyemanuel.willowtweetapp.R$dimen: int activity_vertical_margin
+org.jefferyemanuel.willowtweetapp.R$drawable: int bg
 org.jefferyemanuel.willowtweetapp.R$drawable: int bird
 org.jefferyemanuel.willowtweetapp.R$drawable: int border
 org.jefferyemanuel.willowtweetapp.R$drawable: int bubble
 org.jefferyemanuel.willowtweetapp.R$drawable: int ic_launcher
 org.jefferyemanuel.willowtweetapp.R$drawable: int listshape
+org.jefferyemanuel.willowtweetapp.R$drawable: int overlay
 org.jefferyemanuel.willowtweetapp.R$drawable: int plus_sign
 org.jefferyemanuel.willowtweetapp.R$drawable: int refresh
 org.jefferyemanuel.willowtweetapp.R$drawable: int rounded_corners

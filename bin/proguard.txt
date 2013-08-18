@@ -1,12 +1,12 @@
-# view land\res/layout-land/activity_main.xml #generated:14
-# view res/layout/activity_main.xml #generated:14
+# view land\res/layout-land/tweeterlist_fragment.xml #generated:14
+# view res/layout/tweeterlist_fragment.xml #generated:14
 -keep class android.support.v4.view.PagerTitleStrip { <init>(...); }
 
-# view land\res/layout-land/activity_main.xml #generated:1
-# view res/layout/activity_main.xml #generated:1
+# view land\res/layout-land/tweeterlist_fragment.xml #generated:1
+# view res/layout/tweeterlist_fragment.xml #generated:1
 -keep class android.support.v4.view.ViewPager { <init>(...); }
 
-# view AndroidManifest.xml #generated:54
+# view AndroidManifest.xml #generated:49
 -keep class com.google.ads.AdActivity { <init>(...); }
 
 # view land\res/layout-land/list_item_child.xml #generated:22
@@ -15,14 +15,11 @@
 # view res/layout/modifytweeters_layout.xml #generated:8
 -keep class com.google.ads.AdView { <init>(...); }
 
-# view AndroidManifest.xml #generated:49
+# view AndroidManifest.xml #generated:44
 -keep class org.jefferyemanuel.database.TweeterContentProvider { <init>(...); }
 
 # view AndroidManifest.xml #generated:29
--keep class org.jefferyemanuel.willowtweetapp.MainActivity { <init>(...); }
-
-# view AndroidManifest.xml #generated:42
--keep class org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity { <init>(...); }
+-keep class org.jefferyemanuel.willowtweetapp.FragmentHost_Activity { <init>(...); }
 
 # onClick res/layout/modifytweeters_layout.xml #generated:23
 -keepclassmembers class * { *** onClick(...); }

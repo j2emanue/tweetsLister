@@ -15,12 +15,14 @@ public class Consts {
 	}
 
 	//developer and logging options
-	public static final boolean DEVELOPER_MODE =false;
+	public static final boolean DEVELOPER_MODE =true;
 	public static final String TAG = "willowtweet";
 	public static final String TAG_FRAGMENT = "fragments";
 
 	//MAP keys  (for json twitter object)
 	public static final String KEY_USER_OBJECT = "user";
+	public static final String KEY_SCREEN_NAME="screenname";
+	public static final String KEY_USERID="userid";
 	public static final String KEY_TIMEPOSTED = "timePosted";
 	public static final String KEY_TWEETDATE = "tweetDate";
 	public static final String KEY_AUTHOR = "author";
@@ -57,7 +59,6 @@ public class Consts {
 	public static final String MESSAGE = "message";
 
 	//task fragment id
-	public static final String TASK_FRAGMENT_ID = "task";
 	public static final String TASK_ARGUMENT_USERLIST = "userlist";
 	//Twitter authentication oAUTH keys
 	//TODO use a webservice call to get this key never leave it in local code base
@@ -87,10 +88,11 @@ public class Consts {
 	 * twitter max download reached error # (twitter.com has a max download each
 	 * registered oauth app can have.currently its 100/hr)
 	 */
-	public static final int ERROR_CODE_RATE_LIMITED_EXCEEDED = 88;
+	public static final int ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
 	//admob items
 	public static final String admob_publisherID = "a151f6af36e8971";
 
 	public static final String URL_TWITTER_SEARCH="https://twitter.com/search?q=";
+	
 	
 }

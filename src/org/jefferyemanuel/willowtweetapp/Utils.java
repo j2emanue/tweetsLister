@@ -15,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/*Class represents some static methods instead of duplicating code.  these methods are utility based.
+ * we did a static import in the calling classes to use this*/
 public class Utils {
 
 	private Utils() {};
@@ -76,6 +78,21 @@ public class Utils {
 
 	    public static boolean hasExternalCacheDir() {
 	        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
+	    }
+
+	    /**
+	     * Checks the state of the external storage.
+	     * 
+	     * @return True if the external storage is available, false otherwise.
+	     */
+	    public static boolean isExternalStorageAvailable()
+	    {
+	    	// Get the external storage's state
+	    	String state = Environment.getExternalStorageState();
+
+	    	return (state.equals(Environment.MEDIA_MOUNTED));
+	    	
+
 	    }
 
 

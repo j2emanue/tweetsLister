@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jefferyemanuel.listeners.TaskCallbacks;
+
 import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -28,6 +30,7 @@ public class TaskFragment extends Fragment {
 	//private ProgressDialogFragment pdialog;
 
 	private Configuration twitterConfiguration;
+	private volatile boolean running = true;
 
 	public Configuration getTwitterCoonfiguration() {
 		return twitterConfiguration;
@@ -37,20 +40,7 @@ public class TaskFragment extends Fragment {
 		this.twitterConfiguration = twitterConfiguration;
 	}
 
-	/**
-	 * Callback interface through which the fragment will report the task's
-	 * progress and results back to the Activity.
-	 */
-	interface TaskCallbacks {
-		void onPreExecute();
-
-		void onProgressUpdate(int value);
-
-		void onCancelled();
-
-		void onPostExecute(
-				ArrayList<ArrayList<HashMap<String, Object>>> allUserTweetsMap);
-	}
+	
 
 	public static TaskFragment newInstance(String[] userList) {
 
@@ -114,8 +104,16 @@ public class TaskFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		printLog(Consts.TAG, "calling taskFragment onDetach");
+		printLog(Consts.TAG, "calling onDetach from taskFragment ");
 		mCallbacks = null;
+	}
+
+	/*used to set the volatile running variable to stop the background task.  Could have used onCancel in AsynchTask
+	 * but found some delay*/
+	public void CancelLongOperation() {
+
+		if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED)
+			running = false;
 	}
 
 	/**
@@ -130,17 +128,16 @@ public class TaskFragment extends Fragment {
 
 	private class LongOperation
 			extends
-			AsyncTask<Void, Integer, ArrayList<ArrayList<HashMap<String, Object>>>> {
+			AsyncTask<Void, Integer, ArrayList<ArrayList<HashMap<String, String>>>> {
 
 		//	ConfigurationBuilder cb;
 		/* alloc a twitter object to make read and write calls */
 		Twitter twitter;
-
 		/*
 		 * define our global map of tweeter's object. In this case it will be an
 		 * array of many arrays of tweeter objects
 		 */
-		ArrayList<ArrayList<HashMap<String, Object>>> mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, Object>>>();
+		ArrayList<ArrayList<HashMap<String, String>>> mTweetersObj_map;
 		String[] tweeters;
 
 		public LongOperation() {
@@ -150,6 +147,11 @@ public class TaskFragment extends Fragment {
 					.getInstance();
 			Bundle args = TaskFragment.this.getArguments();
 			tweeters = args.getStringArray(Consts.TASK_ARGUMENT_USERLIST);
+			/*arraylist default capacity is 10 on average, well set the capacity to how many tweeters we have
+			 * for efficiency and avoid high cost of  resizing to another array
+			 * we always insert at the end of the arraylist so time complexity is O(1)
+			 * retreiving by index as well so search is 0(1)*/
+			mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, String>>>(tweeters.length);
 		}
 
 		@Override
@@ -166,14 +168,14 @@ public class TaskFragment extends Fragment {
 		 * the background thread, as this could result in a race condition.
 		 */
 		@Override
-		protected ArrayList<ArrayList<HashMap<String, Object>>> doInBackground(
+		protected ArrayList<ArrayList<HashMap<String, String>>> doInBackground(
 				Void... ignore) {
 
 			List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
 
 			/* define our loop variables outside the loop to avoid massive GC */
-			ArrayList<HashMap<String, Object>> tweeterInfo;
-			HashMap<String, Object> object;
+			ArrayList<HashMap<String, String>> tweeterInfo;
+			HashMap<String, String> object;
 			User user;
 			String avatar;
 			boolean stopPublishing = false;
@@ -191,11 +193,16 @@ public class TaskFragment extends Fragment {
 				printLog(Consts.TAG, "looping through statuses for tweeter:"
 						+ tweeter);
 
-				/*
+				if (!running) {
+					printLog(Consts.TAG,
+							"cancelling doInBackground from TaskFragment");
+					mTweetersObj_map.clear();
+					break;
+				}/*
 				 * save all user specific info into an array ofhashmap object
 				 * called tweeterInfo.
 				 */
-				tweeterInfo = new ArrayList<HashMap<String, Object>>();
+				tweeterInfo = new ArrayList<HashMap<String, String>>();
 
 				try {
 					//grab xNumber of tweets from 1st page for each tweeter
@@ -205,10 +212,10 @@ public class TaskFragment extends Fragment {
 					Log.w(Consts.TAG, "Error locating tweeter named:" + tweeter
 							+ " on Twitter");
 					Log.w(Consts.TAG, e.getMessage());
-					Log.w(Consts.TAG, "errorcode is: "+e.getErrorCode());
-					if (e.getErrorCode() == Consts.ERROR_CODE_RATE_LIMITED_EXCEEDED) {
+					Log.w(Consts.TAG, "errorcode is: " + e.getErrorCode());
+					if (e.getErrorCode() == Consts.ERROR_CODE_RATE_LIMIT_EXCEEDED) {
 						if (!stopPublishing)
-							publishProgress(Consts.ERROR_CODE_RATE_LIMITED_EXCEEDED);
+							publishProgress(Consts.ERROR_CODE_RATE_LIMIT_EXCEEDED);
 						stopPublishing = true;
 					}
 
@@ -226,10 +233,11 @@ public class TaskFragment extends Fragment {
 						 * loop through each status(tweet) and save the
 						 * characters of that tweet to an object
 						 */
-						object = new HashMap<String, Object>();
+						object = new HashMap<String, String>();
 
 						//handle retweets
-						object.put(Consts.KEY_IS_RETWEET, s.isRetweet());
+						object.put(Consts.KEY_IS_RETWEET,
+								s.isRetweet() ? "true" : "false");
 						if (s.isRetweet()) {
 
 							s = s.getRetweetedStatus();
@@ -237,20 +245,23 @@ public class TaskFragment extends Fragment {
 						avatar = s.getUser().getProfileImageURL();
 
 						user = s.getUser();
-						
-						object.put(Consts.KEY_CREATED_DATE, s.getCreatedAt());
+
+						object.put(Consts.KEY_CREATED_DATE, s.getCreatedAt()
+								.toString());
 						object.put(Consts.KEY_TWEET_MSG, s.getText());
-						String timePosted = s.getCreatedAt().toString();//TODO check format of date
+						String timePosted = s.getCreatedAt().toString();
 						object.put(Consts.KEY_TWEETDATE, timePosted);
 						object.put(Consts.KEY_AUTHOR, user.getName());
 						object.put(Consts.KEY_AVATAR, avatar);
-						object.put(Consts.KEY_USER_OBJECT, user);
-						object.put(Consts.KEY_TWEED_ID, s.getId());
+						object.put(Consts.KEY_SCREEN_NAME, user.getScreenName());
+						object.put(Consts.KEY_USERID, user.getId() + "");
+						object.put(Consts.KEY_TWEED_ID, s.getId() + "");
 						object.put(Consts.KEY_TWEET_COUNT,
 								"" + user.getStatusesCount());
 						object.put(Consts.KEY_FOLLOWERS,
-								user.getFollowersCount());
-						object.put(Consts.KEY_FOLLOWING, user.getFriendsCount());
+								user.getFollowersCount() + "");
+						object.put(Consts.KEY_FOLLOWING, user.getFriendsCount()
+								+ "");
 
 						if (Consts.DEVELOPER_MODE)
 							Log.v(Consts.TAG,
@@ -268,8 +279,6 @@ public class TaskFragment extends Fragment {
 						tweeterInfo.add(object);
 
 					}
-
-					//	mTweetersObj_map.add(tweeterInfo);
 
 				}
 				//else
@@ -297,28 +306,30 @@ public class TaskFragment extends Fragment {
 
 		@Override
 		protected void onCancelled() {
+			printLog(Consts.TAG, "calling onCancelled of taskFragment");
+			running = false;
 			if (mCallbacks != null) {
 				mCallbacks.onCancelled();
 			}
-			/* some error occured or user cancelled, kill this worker fragment */
-			getActivity().getSupportFragmentManager().beginTransaction()
-					.remove(TaskFragment.this).commit();
 
 		}
 
 		@Override
 		protected void onPostExecute(
-				ArrayList<ArrayList<HashMap<String, Object>>> result) {
+				ArrayList<ArrayList<HashMap<String, String>>> result) {
 			//super.onPostExecute(result);
 
 			if (mCallbacks != null) {
-
 				mCallbacks.onPostExecute(result);
 
 			}
-			/* task is complete, lets remove outselves from the fragment list */
-			getActivity().getSupportFragmentManager().beginTransaction()
-					.remove(TaskFragment.this).commitAllowingStateLoss();
+			if (getActivity() != null)
+				/*
+				 * task is complete, lets remove outselves from the fragment
+				 * list
+				 */
+				getActivity().getSupportFragmentManager().beginTransaction()
+						.remove(TaskFragment.this).commitAllowingStateLoss();
 		}
 	}
 

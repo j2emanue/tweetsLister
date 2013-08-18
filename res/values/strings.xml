@@ -9,8 +9,8 @@
     <!-- warnings -->
     <string name="warning_no_connection">Your network connection might be down.  Please verify.  Unable to continue.</string>
     <string name="warning_no_data_collected">No valid Tweets found in list or network error.</string>
-    <string name="warning_nothingEntered">Enter A Twitter User name i.e @googleapps
-         or bulk inserts with comma separated list</string>
+    <string name="warning_nothingEntered">i.e @googleapps
+        or comma separated list</string>
     <string name="warning_item_deleted">Item has been deleted.</string>
     <string name="warning_item_inserted_previously">Item has already exist !</string>
     <string name="warning_noitems_present">No items have been added to the list.  Press the plus button in the action bar.</string>
@@ -32,5 +32,8 @@
     <!-- content descriptions -->
 
     <string name="cd_photo">A Twitter Photo</string>
+    
+   
+    
 
 </resources>

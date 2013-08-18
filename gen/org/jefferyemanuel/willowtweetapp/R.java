@@ -56,48 +56,53 @@ public final class R {
         public static final int stickmanpointing=0x7f02000b;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b0019;
-        public static final int adView_one=0x7f0b0011;
-        public static final int adView_three=0x7f0b000a;
-        public static final int adView_two=0x7f0b0014;
-        public static final int avatar_header=0x7f0b0003;
-        public static final int btn_add_newuser=0x7f0b0012;
-        public static final int container_adview=0x7f0b0009;
-        public static final int container_header_info=0x7f0b0004;
-        public static final int container_list_item=0x7f0b0008;
-        public static final int container_tweet_info=0x7f0b000c;
-        public static final int et_additional_username=0x7f0b0013;
-        public static final int header_layout_root=0x7f0b0002;
-        public static final int iv_avatar=0x7f0b000b;
-        public static final int iv_tweetlist_avatar_row=0x7f0b0017;
-        public static final int menu_additionbtn=0x7f0b001a;
-        public static final int menu_load_tweeter_btn=0x7f0b001c;
-        public static final int menu_refresh_btn=0x7f0b001b;
-        public static final int pager=0x7f0b0000;
-        public static final int pager_title_strip=0x7f0b0001;
-        public static final int text=0x7f0b0016;
-        public static final int toast_layout_root=0x7f0b0015;
-        public static final int tv_followers=0x7f0b0006;
-        public static final int tv_following=0x7f0b0005;
-        public static final int tv_name=0x7f0b000d;
-        public static final int tv_noitems=0x7f0b0010;
-        public static final int tv_time=0x7f0b000f;
-        public static final int tv_total_tweets=0x7f0b0007;
-        public static final int tv_tweet_status=0x7f0b000e;
-        public static final int username=0x7f0b0018;
+        public static final int activity_main_root_container=0x7f0b0000;
+        public static final int activity_modifytweeters_container=0x7f0b0002;
+        public static final int activity_tweetslist_container=0x7f0b0001;
+        public static final int adView_one=0x7f0b0012;
+        public static final int adView_three=0x7f0b000b;
+        public static final int adView_two=0x7f0b0015;
+        public static final int avatar_header=0x7f0b0004;
+        public static final int btn_add_newuser=0x7f0b0013;
+        public static final int container_adview=0x7f0b000a;
+        public static final int container_header_info=0x7f0b0005;
+        public static final int container_list_item=0x7f0b0009;
+        public static final int container_tweet_info=0x7f0b000d;
+        public static final int et_additional_username=0x7f0b0014;
+        public static final int header_layout_root=0x7f0b0003;
+        public static final int iv_avatar=0x7f0b000c;
+        public static final int iv_tweetlist_avatar_row=0x7f0b0018;
+        public static final int menu__delete_all_settings=0x7f0b001d;
+        public static final int menu_additionbtn=0x7f0b001e;
+        public static final int menu_load_tweeter_btn=0x7f0b001f;
+        public static final int menu_refresh_btn=0x7f0b0020;
+        public static final int menu_refreshlisting_settings=0x7f0b001c;
+        public static final int pager=0x7f0b001a;
+        public static final int pager_title_strip=0x7f0b001b;
+        public static final int text=0x7f0b0017;
+        public static final int toast_layout_root=0x7f0b0016;
+        public static final int tv_followers=0x7f0b0007;
+        public static final int tv_following=0x7f0b0006;
+        public static final int tv_name=0x7f0b000e;
+        public static final int tv_noitems=0x7f0b0011;
+        public static final int tv_time=0x7f0b0010;
+        public static final int tv_total_tweets=0x7f0b0008;
+        public static final int tv_tweet_status=0x7f0b000f;
+        public static final int username=0x7f0b0019;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int list_header=0x7f030001;
         public static final int list_item_child=0x7f030002;
-        public static final int listfragment_layout=0x7f030003;
+        public static final int lists_viewpager_fragments_layout=0x7f030003;
         public static final int modifytweeters_layout=0x7f030004;
         public static final int toast_layout=0x7f030005;
         public static final int tweeter_list_row_item=0x7f030006;
+        public static final int tweeterlist_fragment=0x7f030007;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
-        public static final int tweeterlist_menu=0x7f0a0001;
+        public static final int twopane_menu=0x7f0a0001;
     }
     public static final class raw {
         public static final int logosound=0x7f050000;

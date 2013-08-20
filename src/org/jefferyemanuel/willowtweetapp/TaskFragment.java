@@ -110,7 +110,7 @@ public class TaskFragment extends Fragment {
 
 	/*used to set the volatile running variable to stop the background task.  Could have used onCancel in AsynchTask
 	 * but found some delay*/
-	public void CancelLongOperation() {
+	public synchronized void CancelLongOperation() {
 
 		if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED)
 			running = false;

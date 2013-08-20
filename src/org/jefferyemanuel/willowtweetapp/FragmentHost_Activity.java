@@ -36,13 +36,29 @@ import android.view.ViewGroup;
 
 public class FragmentHost_Activity extends FragmentActivity implements
 
-		TaskCallbacks, TweeterSelectedListener {
+TaskCallbacks, TweeterSelectedListener {
 
 	private TweeterListObserver mFragmentCallback;
 	private FragmentManager fm;
 	private ViewGroup mModiftyTweetersLayout, mTweetslistLayout;
-	private boolean isEditing;
+	private boolean isEditing, isFromSavedState;
+	private ArrayList<ArrayList<HashMap<String, String>>> tweeters;
+	private int restoredIndex = 0;
 
+	
+	/*make any fragment method calls after the fragments have been resumed*/
+	@Override
+	protected void onResumeFragments() {
+		// TODO Auto-generated method stub
+		super.onResumeFragments();
+
+		if (isFromSavedState) {
+			mFragmentCallback.changePage(restoredIndex);
+			isFromSavedState = false;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -57,14 +73,27 @@ public class FragmentHost_Activity extends FragmentActivity implements
 		if (savedInstanceState != null) {
 			// The fragment manager will handle restoring them if we are being
 			// restored from a saved state
-			mFragmentCallback = (TweeterListObserver) fm
+			isFromSavedState = true;
+			mFragmentCallback = (TweeterListFragment) fm
 					.findFragmentByTag(TweeterListFragment.class.getName());
+
+			/* on orientation change restore the data */
+			tweeters = (ArrayList<ArrayList<HashMap<String, String>>>) savedInstanceState
+					.getSerializable(Consts.SAVED_INSTANCE_TWEETERS);
+			restoredIndex = savedInstanceState
+					.getInt(Consts.SAVED_INSTANCE_POSITION);
+			if (tweeters != null)
+				((TweeterListObserver) mFragmentCallback)
+						.onConnectedToTwitterComplete(tweeters);
 		}
 		//If this is the first creation of the activity, add fragments to it
 		else {
 
-			/* If our layout has a container for the modifytweeters fragment,
-			 create and add it. btw if this exist, we know we are in two pane mode*/
+			/*
+			 * If our layout has a container for the modifytweeters fragment,
+			 * create and add it. btw if this exist, we know we are in two pane
+			 * mode
+			 */
 			mModiftyTweetersLayout = (ViewGroup) findViewById(R.id.activity_modifytweeters_container);
 			if (mModiftyTweetersLayout != null) {
 				printLog(Consts.TAG,
@@ -105,6 +134,28 @@ public class FragmentHost_Activity extends FragmentActivity implements
 
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle state) {
+		super.onSaveInstanceState(state);
+		/*
+		 * on any configuration change such as orientation, lets save all of our
+		 * tweeters instead of making another inefficient network call
+		 */
+		state.putSerializable(Consts.SAVED_INSTANCE_TWEETERS, tweeters);
+
+		/*
+		 * get the current page from the tweetlist fragment and save it
+		 * onConfiguration change
+		 */
+		TweeterListFragment fragment = (TweeterListFragment) fm
+				.findFragmentByTag(TweeterListFragment.class.getName());
+		if (fragment != null) {
+			state.putInt(Consts.SAVED_INSTANCE_POSITION,
+					fragment.getcurrentPage());
+		}
+
+	}
+
 	/* if modify list exist we are in two pane mode clearly */
 	private boolean isTwoPane() {
 		return findViewById(R.id.activity_modifytweeters_container) != null;
@@ -113,7 +164,10 @@ public class FragmentHost_Activity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-/* we have two menus. if we are in two pane mode the menu is more restricted with less options*/
+		/*
+		 * we have two menus. if we are in two pane mode the menu is more
+		 * restricted with less options
+		 */
 		if (!isTwoPane())
 			getMenuInflater().inflate(R.menu.main, menu);
 		else
@@ -121,8 +175,10 @@ public class FragmentHost_Activity extends FragmentActivity implements
 		return true;
 	}
 
-	/*this is called every time we invalidate the options menu.
-	 * we use this to either hide or show the editing button*/
+	/*
+	 * this is called every time we invalidate the options menu. we use this to
+	 * either hide or show the editing button
+	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (!isTwoPane()) {
@@ -189,8 +245,10 @@ public class FragmentHost_Activity extends FragmentActivity implements
 		isEditing = false;
 		invalidateOptionsMenu();
 
-		/*on returning to the tweeter list fragment, if the taskfragment exist it means
-		 * there is a network call occuring, show the proress dialoag*/
+		/*
+		 * on returning to the tweeter list fragment, if the taskfragment exist
+		 * it means there is a network call occuring, show the proress dialoag
+		 */
 		Fragment taskfragment = fm.findFragmentByTag(TaskFragment.class
 				.getName());
 		if (taskfragment != null)
@@ -242,8 +300,17 @@ public class FragmentHost_Activity extends FragmentActivity implements
 
 	}
 
-	/*called from the actionbar when user wants to wipe the entire list of tweeters*/
+	/*
+	 * called from the actionbar when user wants to wipe the entire list of
+	 * tweeters
+	 */
 	public void deleteAllTweetListEntries() {
+
+		TaskFragment task = (TaskFragment) fm
+				.findFragmentByTag(TaskFragment.class.getName());
+		if (task != null)
+			task.CancelLongOperation();
+
 		int numrows = getContentResolver().delete(Consts.CONTENT_URI, null,
 				null);
 		if (numrows > 0)
@@ -280,26 +347,28 @@ public class FragmentHost_Activity extends FragmentActivity implements
 
 		printLog(Consts.TAG, "calling onPostExecute from MainActivity:"
 				+ result.size() + " items");
-		if (result.size() > 0) {
-
+		
 			/*
 			 * all done looping for one specific tweeter, lets save all that
 			 * users status's into our global map
 			 */
-			if (mFragmentCallback != null)
+			if (mFragmentCallback != null) {
 				mFragmentCallback.onConnectedToTwitterComplete(result);
+				tweeters = result;
+			}
 
-		} else
+		if (result.size() <= 0)
 			createToast(this, getString(R.string.warning_no_data_collected));
 	}
 
-	
-
 	@Override
 	public void selectListItem(String tweeterName) {
-		
-		/*if we are in two pane mode this listener will execute a interface method to change the viewpager page*/
-		
+
+		/*
+		 * if we are in two pane mode this listener will execute a interface
+		 * method to change the viewpager page
+		 */
+
 		TweeterListFragment listFragment = (TweeterListFragment) getSupportFragmentManager()
 				.findFragmentByTag(TweeterListFragment.class.getName());
 		if (listFragment != null) {

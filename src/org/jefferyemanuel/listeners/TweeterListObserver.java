@@ -10,4 +10,6 @@ public interface TweeterListObserver {
 			ArrayList<ArrayList<HashMap<String, String>>> allUserTweetsMap);
 
 	void requestRefresh();
+	
+	void changePage(int index);
 }

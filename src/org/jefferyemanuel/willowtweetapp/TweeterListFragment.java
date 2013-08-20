@@ -57,12 +57,13 @@ public class TweeterListFragment extends Fragment implements
 	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private static DiskLruImageCache imageDiskCache;
 	private static NumberFormat nf;
+	private ArrayList<String> mUsernamesList;
 	private boolean fromSavedState = false;
 
 	FragmentManager fm;
 	//contains each tweeters array of info we collected in background
 	static ArrayList<ArrayList<HashMap<String, String>>> mTweetersObj_map;
-	String[] mpageTitles = { "blank" };
+	String[] mpageTitles = {};
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
@@ -72,7 +73,6 @@ public class TweeterListFragment extends Fragment implements
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		//getActivity().getSupportLoaderManager().destroyLoader(Consts.LOADER_ID);
 		printLog(Consts.TAG, "calling onDestroy");
 
 	}
@@ -92,6 +92,8 @@ public class TweeterListFragment extends Fragment implements
 		//    fromSavedState=true;
 		printLog(Consts.TAG,
 				"calling onSavedInstanceState from tweeterListFragment");
+
+		outState.putSerializable("userlist", mUsernamesList);
 	}
 
 	@Override
@@ -102,12 +104,7 @@ public class TweeterListFragment extends Fragment implements
 			TaskFragment task_fragment = (TaskFragment) fm
 					.findFragmentByTag(TaskFragment.class.getName());
 			printLog(Consts.TAG, "calling onResume:" + task_fragment);
-			if (task_fragment != null)
-				/*
-				 * send message to handler (although on UI thread already, to
-				 * begin showing dialog
-				 */
-				threadMsg(Consts.HANDLER_SHOW_DIALOG);
+
 		}
 		Utils.hideKeyboard(getActivity());
 
@@ -136,15 +133,19 @@ public class TweeterListFragment extends Fragment implements
 		return rootView;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//this.setRetainInstance(true);
 
 		if (Consts.DEVELOPER_MODE)
 			LoaderManager.enableDebugLogging(true);
 
 		if (savedInstanceState != null) {
 			fromSavedState = true;
+			mUsernamesList = (ArrayList<String>) savedInstanceState
+					.getSerializable("userlist");
 		}
 
 		printLog(Consts.TAG, "calling onCreate from TweetListFragment:"
@@ -175,7 +176,7 @@ public class TweeterListFragment extends Fragment implements
 
 	}
 
-		public void createWarningDialog(String msg) {
+	public void createWarningDialog(String msg) {
 
 		MyDialogFragment dialogfragment = (MyDialogFragment) MyDialogFragment
 				.newInstance(getActivity(), msg);
@@ -183,50 +184,11 @@ public class TweeterListFragment extends Fragment implements
 
 	}
 
-	private void dismissProgressDialog() {
-		Fragment prev = getActivity().getSupportFragmentManager()
-				.findFragmentByTag("dialog");
-		if (prev != null && prev.getActivity() != null) {
-			DialogFragment df = (DialogFragment) prev;
-			try {
-				df.dismiss();
-			} catch (IllegalStateException e) {
-				// TODO: handle exception
-			}
-		}
-	}
-
-	private void showProgressDialog(String msg) {
-
-		dismissProgressDialog();
-		ProgressDialogFragment dialog = ProgressDialogFragment.newInstance(msg);
-		dialog.setCancelable(true);
-		dialog.show(fm, "dialog");
-	}
-
 	public void reStartLoader() {
 
 		printLog(Consts.TAG, "beginning refresh");
 		getActivity().getSupportLoaderManager().restartLoader(
 				Consts.LOADER_ASYNCH_ID, null, this);
-	}
-
-	/* locates our fragment via tag and updates the progress bar */
-	private void updateProgressDialog(int value) {
-
-		if (value == Consts.ERROR_CODE_RATE_LIMIT_EXCEEDED) {
-			createWarningDialog(getString(R.string.warning_max_apiCalls_Reached));
-		}
-
-		else {
-			ProgressDialogFragment theCurrentDialog = (ProgressDialogFragment) getActivity()
-					.getSupportFragmentManager().findFragmentByTag("dialog");
-			if (theCurrentDialog != null) {
-				theCurrentDialog.setProgressOfDialog(value);
-			}
-
-		}
-
 	}
 
 	/* confirms weather the user has a network connection */
@@ -247,13 +209,27 @@ public class TweeterListFragment extends Fragment implements
 		mViewPager.setCurrentItem(index, true);
 	}
 
+	public void goToPage(int index) {
+		if(mViewPager!=null)
+		mViewPager.setCurrentItem(index, true);
+	}
+
+	public int getcurrentPage() {
+
+		return mViewPager.getCurrentItem();
+
+	}
+
 	public void setupTitles(String[] userList) {
-		mpageTitles = userList;
+//locked just in case as access comes also from cursor loader thread
+		synchronized (mpageTitles) {
+			mpageTitles = userList;
+		}
 	}
 
 	/**
-	 * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages
+	 * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding
+	 * to one of the sections/tabs/pages
 	 * 
 	 * this is a {@link android.support.v4.app.FragmentStatePagerAdapter}
 	 * derivative, which will NOT keep every loaded fragment in memory. use
@@ -262,8 +238,6 @@ public class TweeterListFragment extends Fragment implements
 	 */
 
 	public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-
-		//FragmentManager fm;
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -289,12 +263,13 @@ public class TweeterListFragment extends Fragment implements
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
+
 			return mpageTitles.length;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
+
 			return mpageTitles[position];
 
 		}
@@ -338,7 +313,6 @@ public class TweeterListFragment extends Fragment implements
 			View rootView = inflater.inflate(
 					R.layout.lists_viewpager_fragments_layout, null);
 			lv = (ListView) rootView.findViewById(android.R.id.list);
-			//lv=this.getListView();
 
 			return rootView; //You must return your view here
 		}
@@ -355,7 +329,13 @@ public class TweeterListFragment extends Fragment implements
 			Bundle args = this.getArguments();
 			position = args.getInt(ARG_SECTION_NUMBER);
 
-			if (!mTweetersObj_map.isEmpty()) {
+			/*
+			 * check if we have info and if user is not scrolling the list while
+			 * we are gathering new update from twitter
+			 */
+			if (!mTweetersObj_map.isEmpty())
+
+			{
 
 				/*
 				 * since we know the tweeter (by section fragment argument) lets
@@ -366,6 +346,7 @@ public class TweeterListFragment extends Fragment implements
 				 */
 
 				//if(!mTweetersObj_map.get(position).isEmpty())
+
 				mAdapter = new TweeterListAdapter(
 						(FragmentActivity) getActivity(),
 						R.layout.list_item_child,
@@ -398,8 +379,10 @@ public class TweeterListFragment extends Fragment implements
 
 		}
 
-		//add header to listview, we could have made this stationary but we are providing more real estate for the 
-		//listview this way
+		/*add header to listview, we could have made this stationary but we are providing more real estate for the 
+		listview this way.  We could have made this a stationary header but user experience would be affected with 
+		less room to scroll*/
+		
 		public void addHeader() {
 
 			String temp;
@@ -542,24 +525,34 @@ public class TweeterListFragment extends Fragment implements
 				TaskFragment taskFragment = (TaskFragment) fm
 						.findFragmentByTag(TaskFragment.class.getName());
 
-				// If the Fragment is non-null, then it is currently being
-				// retained across a configuration change.
-				if (taskFragment == null) {
+				/*
+				 * If the Fragment is non-null, then it is currently being
+				 * retained across a configuration change. Also we check if this
+				 * call is from a orientation change if so we do not make a
+				 * network call
+				 */
+				if (taskFragment == null && !fromSavedState) {
 
 					printLog(TAG, "task fragment not found, invoking..");
 
-					taskFragment = TaskFragment.newInstance(mpageTitles);
+					taskFragment = TaskFragment.newInstance(mUsernamesList
+							.toArray(new String[0]));
 
 					fm.beginTransaction()
 							.add(taskFragment, TaskFragment.class.getName())
 							.commit();
 
 				} else if (!fromSavedState) {
+					/*
+					 * as long as we are not returning from a config change,
+					 * cancel any running task and start a new one
+					 */
 					taskFragment.CancelLongOperation();
 
 					fm.beginTransaction().remove(taskFragment).commit();
 					fm.beginTransaction()
-							.add(TaskFragment.newInstance(mpageTitles),
+							.add(TaskFragment.newInstance(mUsernamesList
+									.toArray(new String[0])),
 									TaskFragment.class.getName()).commit();
 				}
 				fromSavedState = false;
@@ -585,7 +578,7 @@ public class TweeterListFragment extends Fragment implements
 		 * user adding new tweets to the tab, lets contact twitter.com to get
 		 * tweets for these users
 		 */
-		ArrayList<String> mUsernamesList = new ArrayList<String>();
+		mUsernamesList = new ArrayList<String>();
 
 		int index = cursor.getColumnIndex(Consts.COLUMN_USER);
 		cursor.moveToFirst();
@@ -597,17 +590,11 @@ public class TweeterListFragment extends Fragment implements
 
 			cursor.moveToNext();
 		}
-
-		/* store user names */
-		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
-
-		/* notify our page adapter of the change */
-		mSectionsPagerAdapter.notifyDataSetChanged();
-
 		/*
 		 * send a message to handler to start taskFragment which is really a
 		 * asynchTask to contact Twitter.com for feeds
 		 */
+
 		if (isOnline())
 			threadMsg(Consts.HANDLER_BEGIN_TASK);
 		else
@@ -625,8 +612,26 @@ public class TweeterListFragment extends Fragment implements
 			ArrayList<ArrayList<HashMap<String, String>>> allUserTweetsMap) {
 		// TODO Auto-generated method stub
 
+		/* store user names */
+
+		/*
+		 * cheap fix.//TODO for some reason we have to go back to the first
+		 * fragment before notifying we deleted the entire list otherwise
+		 * fragmentStatePageradapter leaves the fragments it loaded in memory in
+		 * tack ?????
+		 */
+		if (mUsernamesList.isEmpty()) {
+			goToPage(0);
+		}
 		mTweetersObj_map = allUserTweetsMap;
+		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+
 		mSectionsPagerAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void changePage(int index) {
+		goToPage(index);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class Consts {
 	}
 
 	//developer and logging options
-	public static final boolean DEVELOPER_MODE =true;
+	public static final boolean DEVELOPER_MODE =false;
 	public static final String TAG = "willowtweet";
 	public static final String TAG_FRAGMENT = "fragments";
 
@@ -94,5 +94,7 @@ public class Consts {
 
 	public static final String URL_TWITTER_SEARCH="https://twitter.com/search?q=";
 	
-	
+	//orientation Change keys
+	public static final String SAVED_INSTANCE_TWEETERS="data";
+	public static final String SAVED_INSTANCE_POSITION="current_position";
 }

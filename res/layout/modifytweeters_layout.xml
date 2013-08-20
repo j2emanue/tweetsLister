@@ -1,71 +1,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
     android:background="@drawable/bg"
-    >
+    android:orientation="vertical" >
 
-     <com.google.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-            android:id="@+id/adView_one"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="a151f6af36e8971"
-            ads:loadAdOnCreate="true" 
-            />
-     
-    <LinearLayout 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-    android:orientation="horizontal" >
-        <Button
-             android:id="@+id/btn_add_newuser" 
-        android:layout_width="wrap_content"
+    <com.google.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        android:id="@+id/adView_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="a151f6af36e8971"
+        ads:loadAdOnCreate="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_gravity="center_vertical"
-        android:onClick="onClick"
-        android:text="@string/title_addbutton"/> 
-        
-        
-        <EditText 
-            android:id="@+id/et_additional_username"
-                android:background="@color/crystal_blue" 
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:padding="1dp"
-                android:gravity="center_horizontal"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:lines="3"
-                android:hint="@string/warning_nothingEntered" 
-                 />
-   </LinearLayout>
-        
-    
-     <com.google.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-            android:id="@+id/adView_two"
-            android:layout_width="match_parent"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_add_newuser"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="a151f6af36e8971"
-            ads:loadAdOnCreate="true" 
-            />
-    
-    
-       <ListView 
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:onClick="onClick"
+            android:text="@string/title_addbutton" />
+
+        <EditText
+            android:id="@+id/et_additional_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/crystal_blue"
+            android:gravity="center_horizontal"
+            android:hint="@string/warning_nothingEntered"
+            android:lines="3"
+            android:padding="1dp"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <com.google.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        android:id="@+id/adView_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="a151f6af36e8971"
+        ads:loadAdOnCreate="true" />
+
+    <ListView
         android:id="@+android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:headerDividersEnabled="true"
         android:divider="@color/light_font"
+        android:dividerHeight="1.0sp"
         android:drawSelectorOnTop="false"
-   	 	android:dividerHeight="1.0sp"
-   	 	
-   	 	 />
-    
- 
-    </LinearLayout> 
+        android:headerDividersEnabled="true"
+        tools:listitem="@layout/tweeter_list_row_item" />
+
+</LinearLayout>

@@ -11,8 +11,10 @@
 
 # view land\res/layout-land/list_item_child.xml #generated:22
 # view res/layout/list_item_child.xml #generated:20
-# view res/layout/modifytweeters_layout.xml #generated:48
+# view res/layout/modifytweeters_layout.xml #generated:45
 # view res/layout/modifytweeters_layout.xml #generated:8
+# view sw600dp\res/layout-sw600dp/modifytweeters_layout.xml #generated:44
+# view sw600dp\res/layout-sw600dp/modifytweeters_layout.xml #generated:8
 -keep class com.google.ads.AdView { <init>(...); }
 
 # view AndroidManifest.xml #generated:44
@@ -22,5 +24,6 @@
 -keep class org.jefferyemanuel.willowtweetapp.FragmentHost_Activity { <init>(...); }
 
 # onClick res/layout/modifytweeters_layout.xml #generated:23
+# onClick sw600dp\res/layout-sw600dp/modifytweeters_layout.xml #generated:35
 -keepclassmembers class * { *** onClick(...); }
 

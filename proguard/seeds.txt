@@ -153,12 +153,10 @@ com.google.ads.util.g$a$5: void onClick(android.content.DialogInterface,int)
 com.google.ads.util.g$a$6: void onClick(android.content.DialogInterface,int)
 org.jefferyemanuel.database.TweeterContentProvider
 org.jefferyemanuel.database.TweeterContentProvider: TweeterContentProvider()
+org.jefferyemanuel.willowtweetapp.FragmentHost_Activity
+org.jefferyemanuel.willowtweetapp.FragmentHost_Activity: FragmentHost_Activity()
 org.jefferyemanuel.willowtweetapp.Linkifier$InternalURLSpan: void onClick(android.view.View)
-org.jefferyemanuel.willowtweetapp.MainActivity
-org.jefferyemanuel.willowtweetapp.MainActivity: MainActivity()
-org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity
-org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity: ModifyTweetersActivity()
-org.jefferyemanuel.willowtweetapp.ModifyTweetersActivity: void onClick(android.view.View)
+org.jefferyemanuel.willowtweetapp.ModifyTweetersFragment: void onClick(android.view.View)
 org.jefferyemanuel.willowtweetapp.MyDialogFragment: void onClick(android.content.DialogInterface,int)
 org.jefferyemanuel.willowtweetapp.R$anim: int slide
 org.jefferyemanuel.willowtweetapp.R$anim: int slide_out
@@ -191,7 +189,9 @@ org.jefferyemanuel.willowtweetapp.R$drawable: int refresh
 org.jefferyemanuel.willowtweetapp.R$drawable: int rounded_corners
 org.jefferyemanuel.willowtweetapp.R$drawable: int spinning_loader
 org.jefferyemanuel.willowtweetapp.R$drawable: int stickmanpointing
-org.jefferyemanuel.willowtweetapp.R$id: int action_settings
+org.jefferyemanuel.willowtweetapp.R$id: int activity_main_root_container
+org.jefferyemanuel.willowtweetapp.R$id: int activity_modifytweeters_container
+org.jefferyemanuel.willowtweetapp.R$id: int activity_tweetslist_container
 org.jefferyemanuel.willowtweetapp.R$id: int adView_one
 org.jefferyemanuel.willowtweetapp.R$id: int adView_three
 org.jefferyemanuel.willowtweetapp.R$id: int adView_two
@@ -205,9 +205,11 @@ org.jefferyemanuel.willowtweetapp.R$id: int et_additional_username
 org.jefferyemanuel.willowtweetapp.R$id: int header_layout_root
 org.jefferyemanuel.willowtweetapp.R$id: int iv_avatar
 org.jefferyemanuel.willowtweetapp.R$id: int iv_tweetlist_avatar_row
+org.jefferyemanuel.willowtweetapp.R$id: int menu__delete_all_settings
 org.jefferyemanuel.willowtweetapp.R$id: int menu_additionbtn
 org.jefferyemanuel.willowtweetapp.R$id: int menu_load_tweeter_btn
 org.jefferyemanuel.willowtweetapp.R$id: int menu_refresh_btn
+org.jefferyemanuel.willowtweetapp.R$id: int menu_refreshlisting_settings
 org.jefferyemanuel.willowtweetapp.R$id: int pager
 org.jefferyemanuel.willowtweetapp.R$id: int pager_title_strip
 org.jefferyemanuel.willowtweetapp.R$id: int text
@@ -223,12 +225,13 @@ org.jefferyemanuel.willowtweetapp.R$id: int username
 org.jefferyemanuel.willowtweetapp.R$layout: int activity_main
 org.jefferyemanuel.willowtweetapp.R$layout: int list_header
 org.jefferyemanuel.willowtweetapp.R$layout: int list_item_child
-org.jefferyemanuel.willowtweetapp.R$layout: int listfragment_layout
+org.jefferyemanuel.willowtweetapp.R$layout: int lists_viewpager_fragments_layout
 org.jefferyemanuel.willowtweetapp.R$layout: int modifytweeters_layout
 org.jefferyemanuel.willowtweetapp.R$layout: int toast_layout
 org.jefferyemanuel.willowtweetapp.R$layout: int tweeter_list_row_item
+org.jefferyemanuel.willowtweetapp.R$layout: int tweeterlist_fragment
 org.jefferyemanuel.willowtweetapp.R$menu: int main
-org.jefferyemanuel.willowtweetapp.R$menu: int tweeterlist_menu
+org.jefferyemanuel.willowtweetapp.R$menu: int twopane_menu
 org.jefferyemanuel.willowtweetapp.R$raw: int logosound
 org.jefferyemanuel.willowtweetapp.R$string: int action_clear_all
 org.jefferyemanuel.willowtweetapp.R$string: int action_settings

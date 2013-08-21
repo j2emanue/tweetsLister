@@ -20,7 +20,10 @@ import android.widget.TextView;
 
 public class TweeterListAdapter extends BaseAdapter {
 
-	/*pass in our cache map and UI resouce to poulate as well as each objects info here*/
+	/*
+	 * pass in our cache map and UI resouce to poulate as well as each objects
+	 * info here
+	 */
 	public TweeterListAdapter(FragmentActivity activity,
 			int textViewResourceId, ArrayList<HashMap<String, String>> objects,
 			DiskLruImageCache imageDiskCache) {
@@ -30,6 +33,11 @@ public class TweeterListAdapter extends BaseAdapter {
 		this.imageDiskCache = imageDiskCache;
 		linkifier = new Linkifier();
 		mConverter = new TimeSpanConverter();
+
+		isOrientationLandscape = getRotation(context) == Configuration.ORIENTATION_LANDSCAPE;
+
+		mInflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	private ArrayList<HashMap<String, String>> mTweeterInfo;
@@ -37,6 +45,9 @@ public class TweeterListAdapter extends BaseAdapter {
 	private DiskLruImageCache imageDiskCache;
 	private Linkifier linkifier;
 	private TimeSpanConverter mConverter;
+	private LayoutInflater mInflater;
+	private HashMap<String, String> mTweetMap;
+	private boolean isOrientationLandscape;
 
 	@Override
 	public int getCount() {
@@ -61,87 +72,96 @@ public class TweeterListAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-
+		Holder viewHolder;
 		String author = null, tweet = null, avatarURL = null;
 
 		/*
 		 * GET the specific user status based on position from our array of
 		 * hashmaps. This will give a list of all our users statuses
 		 */
-		HashMap<String, String> tweetMap = getItem(position);
+		mTweetMap = getItem(position);
 
 		final View view;
 
 		//view might be recycled we check here
 		if (convertView != null) {
 			view = convertView;
+			viewHolder = (Holder) view.getTag();
+		}
+		/*
+		 * otherwise view is freshly created, lets store our info into the
+		 * viewHolder object
+		 */
+		else {
 
-		} else {
+			viewHolder = new Holder();
+			view = mInflater.inflate(R.layout.list_item_child, parent, false);
+			//alloc our views to load with textual data
+			viewHolder.tv_message = (TextView) view
+					.findViewById(R.id.tv_tweet_status);
+			viewHolder.tv_author = (TextView) view.findViewById(R.id.tv_name);
+			viewHolder.iv_avatar = (ImageView) view
+					.findViewById(R.id.iv_avatar);
+			viewHolder.tv_time = (TextView) view.findViewById(R.id.tv_time);
 
-			LayoutInflater inflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			view = inflater.inflate(R.layout.list_item_child, parent, false);
+			/* save tweet specific info for later use inside of the views tag */
+
+			viewHolder.id = mTweetMap.get(Consts.KEY_USERID);
+			viewHolder.screen_name = mTweetMap.get(Consts.KEY_SCREEN_NAME);
+			viewHolder.adViewContainer = ((LinearLayout) view
+					.findViewById(R.id.container_adview));
+
+			view.setTag(viewHolder);
 		}
 
-		//alloc our views to load with textual data
-		TextView tv_message = (TextView) view
-				.findViewById(R.id.tv_tweet_status);
-		TextView tv_author = (TextView) view.findViewById(R.id.tv_name);
-		ImageView iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
-		TextView tv_time = (TextView) view.findViewById(R.id.tv_time);
 		/*
 		 * here we check if we are in landscape mode give another look to the
 		 * app for all odd positions, we could have also done this by inflating
 		 * an odd and even list child view
 		 */
-		if (getRotation(context) == Configuration.ORIENTATION_LANDSCAPE)
+		if (isOrientationLandscape)
 			if (position % 2 == 0) {
 
 				view.setBackgroundResource(R.color.pink);
-				tv_author.setTextColor(context.getResources()
+				viewHolder.tv_author.setTextColor(context.getResources()
 						.getColorStateList(R.color.white));
 
 			} else {
 				view.setBackgroundResource(R.color.white);
-				tv_author.setTextColor(context.getResources()
+				viewHolder.tv_author.setTextColor(context.getResources()
 						.getColorStateList(R.color.blue));
 			}
 
-		author = (String) tweetMap.get(Consts.KEY_AUTHOR);
-		tweet = (String) tweetMap.get(Consts.KEY_TWEET_MSG);
-		avatarURL = (String) tweetMap.get(Consts.KEY_AVATAR);
+		author = (String) mTweetMap.get(Consts.KEY_AUTHOR);
+		tweet = (String) mTweetMap.get(Consts.KEY_TWEET_MSG);
+		avatarURL = (String) mTweetMap.get(Consts.KEY_AVATAR);
 
 		//DownloadImageTask.getInstance(context).loadBitmap(avatarURL, iv_avatar);
 		if (imageDiskCache != null)
-			imageDiskCache.getBitmap(avatarURL, iv_avatar);
+			imageDiskCache.getBitmap(avatarURL, viewHolder.iv_avatar);
 
-		/*save tweet specific info for later use inside of the views tag*/
-		Holder holder = new Holder();
-		holder.id = tweetMap.get(Consts.KEY_USERID);
-		holder.screen_name = tweetMap.get(Consts.KEY_SCREEN_NAME);
-		view.setTag(holder);
-	
-		
-		tv_author.setText(author);
-		tv_message.setText(tweet);
-		tv_message.setTag(holder);//we store the user object for linkifier class to open web page on click
-		
-		/*make any links highilighted and clickable*/
-		linkifier.setLinks(tv_message, tweet,
-				Long.parseLong(tweetMap.get(Consts.KEY_USERID)));
+		viewHolder.tv_author.setText(author);
+		viewHolder.tv_message.setText(tweet);
+		viewHolder.tv_message.setTag(viewHolder);//we store the user object for linkifier class to open web page on click
 
-		String time = formatDate(new Date(tweetMap.get(Consts.KEY_CREATED_DATE)));
-		tv_time.setText(time);
+		/* make any links highilighted and clickable */
+		linkifier.setLinks(viewHolder.tv_message, tweet,
+				Long.parseLong(mTweetMap.get(Consts.KEY_USERID)));
 
-		
+		String time = formatDate(new Date(
+				mTweetMap.get(Consts.KEY_CREATED_DATE)));
+		viewHolder.tv_time.setText(time);
+
+		/*
+		 * here we could add the adview back (if its a recycled view) but we
+		 * leave it. It makes the ads disappear after a few scrolls so not to
+		 * affect the users experience too much with ads
+		 */
+
 		if (position % 2 != 0)
-			/*
-			 * here we could add the adview back (if its a recycled view) but we
-			 * leave it. It makes the ads disappear after a few scrolls so not
-			 * to affect the users experience too much with ads
-			 */
-			((LinearLayout) view.findViewById(R.id.container_adview))
-					.removeAllViews();
+			if (viewHolder.adViewContainer != null)
+				viewHolder.adViewContainer.removeAllViews();
+
 		return view;
 
 	}
@@ -177,10 +197,17 @@ public class TweeterListAdapter extends BaseAdapter {
 
 	}
 
-	
-	protected class Holder {
+	/*
+	 * more efficient to have a holder container our info so if the view is a
+	 * recycled one the info can be obtained quickly as inflating or finding
+	 * views has over head.
+	 */
+	protected static class Holder {
 		String id;
 		String screen_name;
+		TextView tv_author, tv_message, tv_time;;
+		ImageView iv_avatar;
+		LinearLayout adViewContainer;
 	}
 
 }

@@ -264,7 +264,9 @@ public class ModifyTweetersFragment extends Fragment implements
 			}
 
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-
+			/* clear white spaces and @ from user names after entered*/
+			userName.setText(userName.getText().toString().replaceAll("\\s", "").replace("@", ""));
+			
 			List<String> userNamesBulkList = Arrays.asList(userName.getText()
 					.toString().split("\\s*,\\s*"));
 			for (String user : userNamesBulkList) {

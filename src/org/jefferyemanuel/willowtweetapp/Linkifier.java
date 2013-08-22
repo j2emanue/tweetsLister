@@ -18,12 +18,15 @@ public class Linkifier {
 		String[] linkPatterns = {
 				"([Hh][tT][tT][pP][sS]?:\\/\\/[^ ,'\">\\]\\)]*[^\\. ,'\">\\]\\)])",
 				"#[\\w]+", "@[\\w]+" };
+		Matcher matcher;
+		Pattern pattern;
+		int x,y;
 		for (String str : linkPatterns) {
-			Pattern pattern = Pattern.compile(str);
-			Matcher matcher = pattern.matcher(tv.getText());
+			pattern = Pattern.compile(str);
+			matcher = pattern.matcher(tv.getText());
 			while (matcher.find()) {
-				int x = matcher.start();
-				int y = matcher.end();
+				 x = matcher.start();
+				 y = matcher.end();
 				final android.text.SpannableString f = new android.text.SpannableString(
 						tv.getText());
 				InternalURLSpan span = new InternalURLSpan();

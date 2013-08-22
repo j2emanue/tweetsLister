@@ -73,9 +73,16 @@ public DiskLruImageCache( Context context,String uniqueName, int diskCacheSize,
     
     
     
-    public synchronized void put( String key, Bitmap data ) {
+    public synchronized void put( String key, Bitmap data,ImageView imageView ) {
 
+    	
         DiskLruCache.Editor editor = null;
+        
+        /* lets scale our bitmap so in the listview (in our case) it will already be the same size as the view 
+         * thus more efficient as scaling at runtime is expensive,//TODO unfortunatley its not working as the width and 
+         * height are not measured until runtime but i can can these from making a dimensions file later*/
+        
+        //data=Bitmap.createScaledBitmap(data, imageView.getWidth(), imageView.getHeight(), true);
         try {
             editor = mDiskCache.edit( key );
             if ( editor == null ) {
@@ -148,7 +155,7 @@ public DiskLruImageCache( Context context,String uniqueName, int diskCacheSize,
                                 );
                            /*save the bitmap into our cache for next fetch*/
                            if(b!=null)
-        				put(safeKey,b);
+        				put(safeKey,b,imageView);
                     }
                     }.start();
 
@@ -165,7 +172,7 @@ public DiskLruImageCache( Context context,String uniqueName, int diskCacheSize,
                 new BufferedInputStream( in, Consts.IO_BUFFER_SIZE );
                 bitmap = BitmapFactory.decodeStream( buffIn );   
                 imageView.setImageBitmap(bitmap);
-                put(safeKey,bitmap);//TODO this call might not be necessary 
+                put(safeKey,bitmap,imageView);//TODO this call might not be necessary 
             }   
         } catch ( IOException e ) {
             e.printStackTrace();

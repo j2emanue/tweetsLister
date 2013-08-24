@@ -7,6 +7,14 @@
         android:visible="true"
         android:title="@string/action_settings"/>
     
+    <item
+        android:id="@+id/menu_quickread_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:visible="true"
+        android:title="Toggle Multi-Column"/>
+     
+    
      <item
         android:id="@+id/menu__delete_all_settings"
         android:orderInCategory="100"

@@ -12,4 +12,8 @@ public interface TweeterListObserver {
 	void requestRefresh();
 	
 	void changePage(int index);
+	
+	void removeItem(String name);
+	
+	void requestMultiColumn(boolean multiColumnChoice);
 }

@@ -72,7 +72,7 @@ public class TweeterListAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		Holder viewHolder;
+		Holder viewHolder = null;
 		String author = null, tweet = null, avatarURL = null;
 
 		/*
@@ -81,7 +81,7 @@ public class TweeterListAdapter extends BaseAdapter {
 		 */
 		mTweetMap = getItem(position);
 
-		final View view;
+		 View view = null;
 
 		//view might be recycled we check here
 		if (convertView != null) {
@@ -90,9 +90,12 @@ public class TweeterListAdapter extends BaseAdapter {
 		}
 		/*
 		 * otherwise view is freshly created, lets store our info into the
-		 * viewHolder object
+		 * viewHolder object. We have to check if viewholder is still null as the 3rd party library we use called
+		 * https://github.com/umano/MultiItemRowListAdapter. if the row item is not even it puts a blank view in its place
+		 * so then a recycled view could indeed have no ViewHolder still. 
+		 * 
 		 */
-		else {
+		if(viewHolder==null) {
 
 			viewHolder = new Holder();
 			view = mInflater.inflate(R.layout.list_item_child, parent, false);
@@ -114,13 +117,14 @@ public class TweeterListAdapter extends BaseAdapter {
 			view.setTag(viewHolder);
 		}
 
+		
 		/*
 		 * here we check if we are in landscape mode give another look to the
 		 * app for all odd positions, we could have also done this by inflating
 		 * an odd and even list child view
 		 */
-		if (isOrientationLandscape)
-			if (position % 2 == 0) {
+		if (isOrientationLandscape )
+			if (position % 2 == 0 ) {
 
 				view.setBackgroundResource(R.color.pink);
 				viewHolder.tv_author.setTextColor(context.getResources()

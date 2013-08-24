@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jefferyemanuel.listeners.ModifyListListener;
 import org.jefferyemanuel.listeners.TweeterSelectedListener;
 
 import android.annotation.TargetApi;
@@ -39,7 +40,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class ModifyTweetersFragment extends Fragment implements
-		OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+		OnClickListener, ModifyListListener,
+		LoaderManager.LoaderCallbacks<Cursor> {
 
 	SoundPool mSoundPool;
 	boolean sound_loaded;
@@ -47,6 +49,7 @@ public class ModifyTweetersFragment extends Fragment implements
 	SimpleCursorAdapter mDataAdapter;
 	ListView tweeterList;
 	TweeterSelectedListener mTweeterSelectedCallback;
+
 	@Override
 	public void onResume() {
 		// TODO Auto-generated method stub
@@ -89,20 +92,19 @@ public class ModifyTweetersFragment extends Fragment implements
 		return rootView;
 	}
 
-	
-	
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
-	
+		printLog("josh", "attaching");
+		//try to restart loader here
 		try {
 			mTweeterSelectedCallback = (TweeterSelectedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement TweeterSelectedListener Listener");
 		}
-	
+
 	}
 
 	@Override
@@ -136,17 +138,6 @@ public class ModifyTweetersFragment extends Fragment implements
 		}
 	}
 
-	public void deleteAllTweetListEntries() {
-
-		//String where = Consts.COLUMN_USER + " = *";
-
-		int numrows = getActivity().getContentResolver().delete(
-				Consts.CONTENT_URI, null, null);
-		if (numrows > 0)
-			createToast(getActivity(), getString(R.string.warning_item_deleted));
-
-	}
-
 	private void displayListView(View rootView) {
 
 		// The desired columns to be bound
@@ -166,16 +157,16 @@ public class ModifyTweetersFragment extends Fragment implements
 		//Ensures a loader is initialized and active.
 		getActivity().getSupportLoaderManager().initLoader(0, null, this);
 
-		
-		
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> listView, View view, int position,
-					long arg3) {
-				
-				TextView username_tv=(TextView)view.findViewById(R.id.username);
-				mTweeterSelectedCallback.selectListItem(username_tv.getText().toString());
+			public void onItemClick(AdapterView<?> listView, View view,
+					int position, long arg3) {
+
+				TextView username_tv = (TextView) view
+						.findViewById(R.id.username);
+				mTweeterSelectedCallback.requestListItem(username_tv.getText()
+						.toString());
 			}
 		});
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -183,6 +174,12 @@ public class ModifyTweetersFragment extends Fragment implements
 			public boolean onItemLongClick(AdapterView<?> listView, View view,
 					int position, long id) {
 				playSound(soundID);
+				/* cancel any network while we delete objects */
+				TaskFragment task = (TaskFragment) getActivity()
+						.getSupportFragmentManager().findFragmentByTag(
+								TaskFragment.class.getName());
+				if (task != null)
+					task.CancelLongOperation();
 
 				TextView userName_tv = (TextView) view
 						.findViewById(R.id.username);
@@ -192,13 +189,29 @@ public class ModifyTweetersFragment extends Fragment implements
 
 				int numrows = getActivity().getContentResolver().delete(
 						Consts.CONTENT_URI, where, new String[] { username });
+
 				if (numrows > 0)
 					createToast(getActivity(),
 							getString(R.string.warning_item_deleted));
+
+				sendRequestForItemDeletion(username);
+
 				return true;
 			}
-		}
-		);
+		});
+
+	}
+
+	public void sendRequestForItemDeletion(String username) {
+
+		mTweeterSelectedCallback.requestItemDeletion(username);
+		mDataAdapter.getCursor().requery();
+		mDataAdapter.notifyDataSetChanged();
+		/*
+		 * printLog(Consts.TAG, "restarting loader");
+		 * getActivity().getSupportLoaderManager().restartLoader(
+		 * Consts.LOADER_ID, null, this);
+		 */
 
 	}
 
@@ -264,9 +277,10 @@ public class ModifyTweetersFragment extends Fragment implements
 			}
 
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
-			/* clear white spaces and @ from user names after entered*/
-			userName.setText(userName.getText().toString().replaceAll("\\s", "").replace("@", ""));
-			
+			/* clear white spaces and @ from user names after entered */
+			userName.setText(userName.getText().toString()
+					.replaceAll("\\s", "").replace("@", ""));
+
 			List<String> userNamesBulkList = Arrays.asList(userName.getText()
 					.toString().split("\\s*,\\s*"));
 			for (String user : userNamesBulkList) {
@@ -287,18 +301,14 @@ public class ModifyTweetersFragment extends Fragment implements
 					printLog(Consts.TAG, e.toString());
 			}
 
-			/*
-			 * ContentValues values = new ContentValues();
-			 * values.put(Consts.COLUMN_USER, userName.getText().toString());
-			 * 
-			 * Uri result = getContentResolver() .insert(Consts.CONTENT_URI,
-			 * values);
-			 * 
-			 * long newID = ContentUris.parseId(result); if (newID < 0)
-			 * createToast
-			 * (getString(R.string.warning_item_inserted_previously));
-			 */break;
+			break;
 		}
+	}
+
+	@Override
+	public void deleteAllItems() {
+		sendRequestForItemDeletion("*");
+
 	}
 
 }

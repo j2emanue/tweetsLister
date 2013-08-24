@@ -151,6 +151,24 @@ com.google.ads.util.g$a$2: void onClick(android.content.DialogInterface,int)
 com.google.ads.util.g$a$3: void onClick(android.content.DialogInterface,int)
 com.google.ads.util.g$a$5: void onClick(android.content.DialogInterface,int)
 com.google.ads.util.g$a$6: void onClick(android.content.DialogInterface,int)
+com.sothree.multiitemrowlistadapter.demo.DemoActivity
+com.sothree.slidinguppaneldemo.R$color: int app_background
+com.sothree.slidinguppaneldemo.R$dimen: int spacing
+com.sothree.slidinguppaneldemo.R$drawable: int above_shadow
+com.sothree.slidinguppaneldemo.R$drawable: int ic_launcher
+com.sothree.slidinguppaneldemo.R$drawable: int list_selector
+com.sothree.slidinguppaneldemo.R$id: int action_settings
+com.sothree.slidinguppaneldemo.R$id: int image
+com.sothree.slidinguppaneldemo.R$id: int lbl_contact_name
+com.sothree.slidinguppaneldemo.R$integer: int items_per_row
+com.sothree.slidinguppaneldemo.R$layout: int activity_demo
+com.sothree.slidinguppaneldemo.R$layout: int include_list_item_contact
+com.sothree.slidinguppaneldemo.R$menu: int demo
+com.sothree.slidinguppaneldemo.R$string: int action_settings
+com.sothree.slidinguppaneldemo.R$string: int app_name
+com.sothree.slidinguppaneldemo.R$string: int hello_world
+com.sothree.slidinguppaneldemo.R$style: int AppBaseTheme
+com.sothree.slidinguppaneldemo.R$style: int AppTheme
 org.jefferyemanuel.database.TweeterContentProvider
 org.jefferyemanuel.database.TweeterContentProvider: TweeterContentProvider()
 org.jefferyemanuel.willowtweetapp.FragmentHost_Activity
@@ -160,6 +178,7 @@ org.jefferyemanuel.willowtweetapp.ModifyTweetersFragment: void onClick(android.v
 org.jefferyemanuel.willowtweetapp.MyDialogFragment: void onClick(android.content.DialogInterface,int)
 org.jefferyemanuel.willowtweetapp.R$anim: int slide
 org.jefferyemanuel.willowtweetapp.R$anim: int slide_out
+org.jefferyemanuel.willowtweetapp.R$color: int app_background
 org.jefferyemanuel.willowtweetapp.R$color: int black
 org.jefferyemanuel.willowtweetapp.R$color: int blue
 org.jefferyemanuel.willowtweetapp.R$color: int crystal_blue
@@ -177,11 +196,15 @@ org.jefferyemanuel.willowtweetapp.R$color: int translucent_red
 org.jefferyemanuel.willowtweetapp.R$color: int white
 org.jefferyemanuel.willowtweetapp.R$dimen: int activity_horizontal_margin
 org.jefferyemanuel.willowtweetapp.R$dimen: int activity_vertical_margin
+org.jefferyemanuel.willowtweetapp.R$dimen: int item_spacing
+org.jefferyemanuel.willowtweetapp.R$dimen: int spacing
+org.jefferyemanuel.willowtweetapp.R$drawable: int above_shadow
 org.jefferyemanuel.willowtweetapp.R$drawable: int bg
 org.jefferyemanuel.willowtweetapp.R$drawable: int bird
 org.jefferyemanuel.willowtweetapp.R$drawable: int border
 org.jefferyemanuel.willowtweetapp.R$drawable: int bubble
 org.jefferyemanuel.willowtweetapp.R$drawable: int ic_launcher
+org.jefferyemanuel.willowtweetapp.R$drawable: int list_selector
 org.jefferyemanuel.willowtweetapp.R$drawable: int listshape
 org.jefferyemanuel.willowtweetapp.R$drawable: int overlay
 org.jefferyemanuel.willowtweetapp.R$drawable: int plus_sign
@@ -189,6 +212,7 @@ org.jefferyemanuel.willowtweetapp.R$drawable: int refresh
 org.jefferyemanuel.willowtweetapp.R$drawable: int rounded_corners
 org.jefferyemanuel.willowtweetapp.R$drawable: int spinning_loader
 org.jefferyemanuel.willowtweetapp.R$drawable: int stickmanpointing
+org.jefferyemanuel.willowtweetapp.R$id: int action_settings
 org.jefferyemanuel.willowtweetapp.R$id: int activity_main_root_container
 org.jefferyemanuel.willowtweetapp.R$id: int activity_modifytweeters_container
 org.jefferyemanuel.willowtweetapp.R$id: int activity_tweetslist_container
@@ -203,11 +227,14 @@ org.jefferyemanuel.willowtweetapp.R$id: int container_list_item
 org.jefferyemanuel.willowtweetapp.R$id: int container_tweet_info
 org.jefferyemanuel.willowtweetapp.R$id: int et_additional_username
 org.jefferyemanuel.willowtweetapp.R$id: int header_layout_root
+org.jefferyemanuel.willowtweetapp.R$id: int image
 org.jefferyemanuel.willowtweetapp.R$id: int iv_avatar
 org.jefferyemanuel.willowtweetapp.R$id: int iv_tweetlist_avatar_row
+org.jefferyemanuel.willowtweetapp.R$id: int lbl_contact_name
 org.jefferyemanuel.willowtweetapp.R$id: int menu__delete_all_settings
 org.jefferyemanuel.willowtweetapp.R$id: int menu_additionbtn
 org.jefferyemanuel.willowtweetapp.R$id: int menu_load_tweeter_btn
+org.jefferyemanuel.willowtweetapp.R$id: int menu_quickread_settings
 org.jefferyemanuel.willowtweetapp.R$id: int menu_refresh_btn
 org.jefferyemanuel.willowtweetapp.R$id: int menu_refreshlisting_settings
 org.jefferyemanuel.willowtweetapp.R$id: int pager
@@ -222,7 +249,10 @@ org.jefferyemanuel.willowtweetapp.R$id: int tv_time
 org.jefferyemanuel.willowtweetapp.R$id: int tv_total_tweets
 org.jefferyemanuel.willowtweetapp.R$id: int tv_tweet_status
 org.jefferyemanuel.willowtweetapp.R$id: int username
+org.jefferyemanuel.willowtweetapp.R$integer: int items_per_row
+org.jefferyemanuel.willowtweetapp.R$layout: int activity_demo
 org.jefferyemanuel.willowtweetapp.R$layout: int activity_main
+org.jefferyemanuel.willowtweetapp.R$layout: int include_list_item_contact
 org.jefferyemanuel.willowtweetapp.R$layout: int list_header
 org.jefferyemanuel.willowtweetapp.R$layout: int list_item_child
 org.jefferyemanuel.willowtweetapp.R$layout: int lists_viewpager_fragments_layout
@@ -230,6 +260,7 @@ org.jefferyemanuel.willowtweetapp.R$layout: int modifytweeters_layout
 org.jefferyemanuel.willowtweetapp.R$layout: int toast_layout
 org.jefferyemanuel.willowtweetapp.R$layout: int tweeter_list_row_item
 org.jefferyemanuel.willowtweetapp.R$layout: int tweeterlist_fragment
+org.jefferyemanuel.willowtweetapp.R$menu: int demo
 org.jefferyemanuel.willowtweetapp.R$menu: int main
 org.jefferyemanuel.willowtweetapp.R$menu: int twopane_menu
 org.jefferyemanuel.willowtweetapp.R$raw: int logosound
@@ -237,6 +268,7 @@ org.jefferyemanuel.willowtweetapp.R$string: int action_clear_all
 org.jefferyemanuel.willowtweetapp.R$string: int action_settings
 org.jefferyemanuel.willowtweetapp.R$string: int app_name
 org.jefferyemanuel.willowtweetapp.R$string: int cd_photo
+org.jefferyemanuel.willowtweetapp.R$string: int hello_world
 org.jefferyemanuel.willowtweetapp.R$string: int notification_loading_items
 org.jefferyemanuel.willowtweetapp.R$string: int title_addbutton
 org.jefferyemanuel.willowtweetapp.R$string: int title_addtweeter

@@ -11,6 +11,8 @@ import java.util.HashMap;
 import org.jefferyemanuel.listeners.TweeterListObserver;
 import org.jefferyemanuel.willowtweetapp.TweeterListAdapter.Holder;
 
+import com.sothree.multiitemrowlistadapter.MultiItemRowListAdapter;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -59,6 +61,15 @@ public class TweeterListFragment extends Fragment implements
 	private static NumberFormat nf;
 	private ArrayList<String> mUsernamesList;
 	private boolean fromSavedState = false;
+	private boolean mMultipleColumns;
+
+	public boolean getMultipleColumns() {
+		return mMultipleColumns;
+	}
+
+	public void setMultipleColumns(boolean mMultipleColumns) {
+		this.mMultipleColumns = mMultipleColumns;
+	}
 
 	FragmentManager fm;
 	//contains each tweeters array of info we collected in background
@@ -210,8 +221,8 @@ public class TweeterListFragment extends Fragment implements
 	}
 
 	public void goToPage(int index) {
-		if(mViewPager!=null)
-		mViewPager.setCurrentItem(index, true);
+		if (mViewPager != null)
+			mViewPager.setCurrentItem(index, true);
 	}
 
 	public int getcurrentPage() {
@@ -221,7 +232,7 @@ public class TweeterListFragment extends Fragment implements
 	}
 
 	public void setupTitles(String[] userList) {
-//locked just in case as access comes also from cursor loader thread
+		//locked just in case as access comes also from cursor loader thread
 		synchronized (mpageTitles) {
 			mpageTitles = userList;
 		}
@@ -249,8 +260,8 @@ public class TweeterListFragment extends Fragment implements
 			// Return a listFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
 
-			TweetsListFragment mListfragment = TweetsListFragment
-					.newInstance(position);
+			TweetsListFragment mListfragment = TweetsListFragment.newInstance(
+					position, getMultipleColumns());
 
 			return mListfragment;
 		}
@@ -289,15 +300,19 @@ public class TweeterListFragment extends Fragment implements
 		 * fragment.
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
+		public static final String ARG_MULTICOLUMN = "shouldColumn";
 
 		int position;
 		String key;
 		ListView lv;
 		TweeterListAdapter mAdapter;
+		boolean multiColumn;
 
-		public static TweetsListFragment newInstance(int position) {
+		public static TweetsListFragment newInstance(int position,
+				boolean multiColumn) {
 			Bundle args = new Bundle();
-			args.putInt(TweetsListFragment.ARG_SECTION_NUMBER, position);
+			args.putInt(ARG_SECTION_NUMBER, position);
+			args.putBoolean(ARG_MULTICOLUMN, multiColumn);
 			TweetsListFragment f = new TweetsListFragment();
 			f.setArguments(args);
 			return f;
@@ -329,6 +344,7 @@ public class TweeterListFragment extends Fragment implements
 			Bundle args = this.getArguments();
 			position = args.getInt(ARG_SECTION_NUMBER);
 
+			multiColumn = args.getBoolean(ARG_MULTICOLUMN);
 			/*
 			 * check if we have info and if user is not scrolling the list while
 			 * we are gathering new update from twitter
@@ -345,7 +361,10 @@ public class TweeterListFragment extends Fragment implements
 				 * section position and create an adapter for our listview
 				 */
 
-				//if(!mTweetersObj_map.get(position).isEmpty())
+				int spacing = (int) getResources().getDimension(
+						R.dimen.item_spacing);
+				int itemsPerRow = getResources().getInteger(
+						R.integer.items_per_row);
 
 				mAdapter = new TweeterListAdapter(
 						(FragmentActivity) getActivity(),
@@ -354,9 +373,15 @@ public class TweeterListFragment extends Fragment implements
 
 				addHeader();
 
-				//finally set the adapter for each listview upon call
-				lv.setAdapter(mAdapter);
+				if (multiColumn) 
+				{
+					MultiItemRowListAdapter wrapperAdapter = new MultiItemRowListAdapter(
+							getActivity(), mAdapter, itemsPerRow, spacing);
+					lv.setAdapter(wrapperAdapter);
+				} else
 
+					//finally set the adapter for each listview upon call
+					lv.setAdapter(mAdapter);
 			}
 
 		}
@@ -379,10 +404,13 @@ public class TweeterListFragment extends Fragment implements
 
 		}
 
-		/*add header to listview, we could have made this stationary but we are providing more real estate for the 
-		listview this way.  We could have made this a stationary header but user experience would be affected with 
-		less room to scroll*/
-		
+		/*
+		 * add header to listview, we could have made this stationary but we are
+		 * providing more real estate for the listview this way. We could have
+		 * made this a stationary header but user experience would be affected
+		 * with less room to scroll
+		 */
+
 		public void addHeader() {
 
 			String temp;
@@ -637,6 +665,34 @@ public class TweeterListFragment extends Fragment implements
 	@Override
 	public void requestRefresh() {
 		reStartLoader();
+	}
+
+	@Override
+	public void removeItem(String name){
+		
+		if(name.equals("*"))
+			/*delete everything*/
+		{
+		 mUsernamesList.clear();
+		 mTweetersObj_map.clear();
+		}
+		else
+		{
+		int index=mUsernamesList.indexOf(name);
+		mTweetersObj_map.remove(index);
+		mUsernamesList.remove(name);
+		}
+		
+		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+				mSectionsPagerAdapter.notifyDataSetChanged();
+		
+		
+	}
+	
+	@Override
+	public void requestMultiColumn(boolean multiColumnChoice) {
+		this.setMultipleColumns(multiColumnChoice);
+		mSectionsPagerAdapter.notifyDataSetChanged();
 	}
 
 }

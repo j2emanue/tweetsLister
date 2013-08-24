@@ -136,7 +136,11 @@ public class TweeterContentProvider extends ContentProvider {
 		    default:
 		      throw new IllegalArgumentException("Unknown URI: " + uri);
 		    }
-		    getContext().getContentResolver().notifyChange(uri, null);
+		    /*lets not notify content observers on deletes of less then 1 as each delete would cause a network call.
+		     * user could delete multiple entries at once. if the deletes are greater then 1 then its probably a 
+		     * request to remove the entire list, this we will allow*/
+		    if(rowsDeleted>1)
+		    	getContext().getContentResolver().notifyChange(uri, null);
 		    return rowsDeleted;
 		  }
 

@@ -55,6 +55,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:divider="@color/light_font"
+        android:fastScrollEnabled="true"
         android:dividerHeight="1.0sp"
         android:drawSelectorOnTop="false"
         android:headerDividersEnabled="true"

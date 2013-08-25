@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.jefferyemanuel.listeners.TaskCallbacks;
 import org.jefferyemanuel.listeners.TweeterListObserver;
 import org.jefferyemanuel.willowtweetapp.TweeterListAdapter.Holder;
 
@@ -57,11 +58,11 @@ public class TweeterListFragment extends Fragment implements
 		LoaderManager.LoaderCallbacks<Cursor>, TweeterListObserver {
 
 	private SectionsPagerAdapter mSectionsPagerAdapter;
-	private static DiskLruImageCache imageDiskCache;
 	private static NumberFormat nf;
 	private ArrayList<String> mUsernamesList;
 	private boolean fromSavedState = false;
 	private boolean mMultipleColumns;
+	private int mCurrentPage;
 
 	public boolean getMultipleColumns() {
 		return mMultipleColumns;
@@ -168,14 +169,6 @@ public class TweeterListFragment extends Fragment implements
 		//this calls expensive so lets do it once as it has to fetch the system locale which can be intense
 		nf = NumberFormat.getInstance();
 
-		/* log into twitter using oAUTH */
-
-		/* CREATE OUR DISK CACHE TO STORE IMAGES */
-		if (Utils.isExternalStorageAvailable())
-			imageDiskCache = new DiskLruImageCache(getActivity(), "diskcache",
-					Consts.DISK_CACHE_SIZE, CompressFormat.PNG,
-					Consts.COMPRESS_QUALITY);
-
 		/* initialize the map of all our tweeter data sources for each listview */
 		mTweetersObj_map = new ArrayList<ArrayList<HashMap<String, String>>>();
 
@@ -257,11 +250,10 @@ public class TweeterListFragment extends Fragment implements
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a listFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
+			// Return a listFragment ) with the page number as one of its argument.
 
 			TweetsListFragment mListfragment = TweetsListFragment.newInstance(
-					position, getMultipleColumns());
+					position, getMultipleColumns(), nf, mpageTitles[position]);
 
 			return mListfragment;
 		}
@@ -293,235 +285,6 @@ public class TweeterListFragment extends Fragment implements
 		 */
 	}
 
-	public static class TweetsListFragment extends ListFragment implements
-			OnItemClickListener {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
-		public static final String ARG_MULTICOLUMN = "shouldColumn";
-
-		int position;
-		String key;
-		ListView lv;
-		TweeterListAdapter mAdapter;
-		boolean multiColumn;
-
-		public static TweetsListFragment newInstance(int position,
-				boolean multiColumn) {
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, position);
-			args.putBoolean(ARG_MULTICOLUMN, multiColumn);
-			TweetsListFragment f = new TweetsListFragment();
-			f.setArguments(args);
-			return f;
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-
-			printLog(Consts.TAG_FRAGMENT, "OnCreateView called");
-
-			/* lets get a handle on our listview and set a click listener */
-			View rootView = inflater.inflate(
-					R.layout.lists_viewpager_fragments_layout, null);
-			lv = (ListView) rootView.findViewById(android.R.id.list);
-
-			return rootView; //You must return your view here
-		}
-
-		@Override
-		public void onActivityCreated(Bundle savedInstanceState) {
-			// TODO Auto-generated method stub
-			super.onActivityCreated(savedInstanceState);
-
-			lv.setOnItemClickListener((OnItemClickListener) this);
-
-			printLog(Consts.TAG_FRAGMENT, "OnActivityCreated called");
-
-			Bundle args = this.getArguments();
-			position = args.getInt(ARG_SECTION_NUMBER);
-
-			multiColumn = args.getBoolean(ARG_MULTICOLUMN);
-			/*
-			 * check if we have info and if user is not scrolling the list while
-			 * we are gathering new update from twitter
-			 */
-			if (!mTweetersObj_map.isEmpty())
-
-			{
-
-				/*
-				 * since we know the tweeter (by section fragment argument) lets
-				 * get the array of tweets for that tweeter and pass it to our
-				 * adapter as the datasource. So each time the position changes
-				 * we re-use this fragment and get another tweeter based on
-				 * section position and create an adapter for our listview
-				 */
-
-				int spacing = (int) getResources().getDimension(
-						R.dimen.item_spacing);
-				int itemsPerRow = getResources().getInteger(
-						R.integer.items_per_row);
-
-				mAdapter = new TweeterListAdapter(
-						(FragmentActivity) getActivity(),
-						R.layout.list_item_child,
-						mTweetersObj_map.get(position), imageDiskCache);
-
-				addHeader();
-
-				if (multiColumn) 
-				{
-					MultiItemRowListAdapter wrapperAdapter = new MultiItemRowListAdapter(
-							getActivity(), mAdapter, itemsPerRow, spacing);
-					lv.setAdapter(wrapperAdapter);
-				} else
-
-					//finally set the adapter for each listview upon call
-					lv.setAdapter(mAdapter);
-			}
-
-		}
-
-		@Override
-		public void onResume() {
-			// TODO Auto-generated method stub
-			super.onResume();
-
-			printLog(Consts.TAG_FRAGMENT, "OnResume called:" + position);
-
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			// TODO Auto-generated method stub
-			super.onAttach(activity);
-
-			printLog(Consts.TAG_FRAGMENT, "OnAttach called");
-
-		}
-
-		/*
-		 * add header to listview, we could have made this stationary but we are
-		 * providing more real estate for the listview this way. We could have
-		 * made this a stationary header but user experience would be affected
-		 * with less room to scroll
-		 */
-
-		public void addHeader() {
-
-			String temp;
-			/* get a specific tweeter's tweets from the map of all tweeters */
-			ArrayList<HashMap<String, String>> aTweeter = mTweetersObj_map
-					.get(position);
-
-			int size = aTweeter.size();
-
-			View header = View.inflate(getActivity(), R.layout.list_header,
-					null);
-
-			TextView tv_total_tweets = (TextView) header
-					.findViewById(R.id.tv_total_tweets);
-			TextView tv_total_followers = (TextView) header
-					.findViewById(R.id.tv_followers);
-			TextView tv_total_friends = (TextView) header
-					.findViewById(R.id.tv_following);
-			ImageView headerImage = (ImageView) header
-					.findViewById(R.id.avatar_header);
-
-			for (int i = 0; i < size; i++) {
-				if (!(Boolean) Boolean.parseBoolean(aTweeter.get(i).get(
-						Consts.KEY_IS_RETWEET))) {
-					//since its not a retweet we know the info is for the sectioned user 
-					temp = null;
-					/* set up total followers format */
-					temp = aTweeter.get(i).get(Consts.KEY_FOLLOWERS) + "";
-					temp = nf.format(Long.parseLong(temp));
-
-					tv_total_followers.setText(temp + " Followers");
-
-					/* set up total tweets format */
-
-					temp = (String) aTweeter.get(i).get(Consts.KEY_TWEET_COUNT);
-
-					temp = nf.format(Long.parseLong(temp));// format the number
-
-					tv_total_tweets.setText(temp + " "
-							+ getString(R.string.tweets));
-
-					/* set up total following format */
-					temp = (String) (aTweeter.get(i).get(Consts.KEY_FOLLOWING) + "");
-					tv_total_friends.setText(nf.format(Long.parseLong(temp))
-							+ " Following");
-
-					String avatarURL = (String) aTweeter.get(i).get(
-							Consts.KEY_AVATAR);
-
-					/* save header image to disk cache for quick re-use */
-					if (imageDiskCache != null)
-						imageDiskCache.getBitmap(avatarURL, headerImage);
-					break;//break out of the loop as we have filled the header with valid data not from a retweet
-				}
-			}
-			/* add the header to listView */
-			lv.addHeaderView(header, null, false);
-
-		}
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			// TODO Auto-generated method stub
-
-			/*
-			 * A listView item click listener that on item click either goes to
-			 * web twitter or if app is installed opens up users profile
-			 */
-			Intent intent = null;
-
-			/*
-			 * our listView adapter saved each users info each items views tag.
-			 * We use this user info here.
-			 */
-			Holder twitterUser = (Holder) view.getTag();
-
-			printLog(Consts.TAG, "list item clicked");
-
-			try {
-				intent = new Intent(Intent.ACTION_VIEW);
-				intent.setClassName("com.twitter.android",
-						"com.twitter.android.ProfileActivity");
-				// Don't forget to put a long object as the extra.
-				intent.putExtra("user_id", Long.parseLong(twitterUser.id));
-				startActivity(intent);
-			} catch (Exception e) {
-				// no Twitter app, revert to browser
-				intent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse("https://twitter.com/"
-								+ twitterUser.screen_name));
-
-				this.startActivity(intent);
-			}
-		}
-
-		/*
-		 * @Override public void onSaveInstanceState(Bundle outState) {
-		 * 
-		 * //cheap fix from stackoverflow if pageradapter does not refresh on
-		 * orientation change. now using //statepageadapter which would resolve
-		 * this conflict but leaving legacy code incase String tabTitle
-		 * =(String) mSectionsPagerAdapter.getPageTitle(position);
-		 * outState.putString("tab", tabTitle);
-		 * super.onSaveInstanceState(outState);
-		 * 
-		 * }
-		 */
-
-	}
-
 	/* sends a message to handler on UI thread */
 	private void threadMsg(String msg) {
 
@@ -548,46 +311,13 @@ public class TweeterListFragment extends Fragment implements
 
 			printLog(TAG, aResponse);
 
-			if (aResponse.equals(Consts.HANDLER_BEGIN_TASK)) {
+			if (aResponse.equals(Consts.HANDLER_UPDATE_PAGER_ADAPTER)) {
 
-				TaskFragment taskFragment = (TaskFragment) fm
-						.findFragmentByTag(TaskFragment.class.getName());
-
-				/*
-				 * If the Fragment is non-null, then it is currently being
-				 * retained across a configuration change. Also we check if this
-				 * call is from a orientation change if so we do not make a
-				 * network call
-				 */
-				if (taskFragment == null && !fromSavedState) {
-
-					printLog(TAG, "task fragment not found, invoking..");
-
-					taskFragment = TaskFragment.newInstance(mUsernamesList
-							.toArray(new String[0]));
-
-					fm.beginTransaction()
-							.add(taskFragment, TaskFragment.class.getName())
-							.commit();
-
-				} else if (!fromSavedState) {
-					/*
-					 * as long as we are not returning from a config change,
-					 * cancel any running task and start a new one
-					 */
-					taskFragment.CancelLongOperation();
-
-					fm.beginTransaction().remove(taskFragment).commit();
-					fm.beginTransaction()
-							.add(TaskFragment.newInstance(mUsernamesList
-									.toArray(new String[0])),
-									TaskFragment.class.getName()).commit();
-				}
-				fromSavedState = false;
+				setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+				mSectionsPagerAdapter.notifyDataSetChanged();
+				mViewPager.setCurrentItem(mCurrentPage);
 			}
-
 		}
-
 	};
 
 	@Override
@@ -618,13 +348,20 @@ public class TweeterListFragment extends Fragment implements
 
 			cursor.moveToNext();
 		}
+
+		//setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+		//mSectionsPagerAdapter.notifyDataSetChanged();
 		/*
 		 * send a message to handler to start taskFragment which is really a
 		 * asynchTask to contact Twitter.com for feeds
 		 */
+		if (mUsernamesList.isEmpty()) {
+			setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+			mSectionsPagerAdapter.notifyDataSetChanged();
+		}
 
-		if (isOnline())
-			threadMsg(Consts.HANDLER_BEGIN_TASK);
+		else if (isOnline())
+			threadMsg(Consts.HANDLER_UPDATE_PAGER_ADAPTER);
 		else
 			createToast(getActivity(),
 					getString(R.string.warning_no_connection));
@@ -636,30 +373,9 @@ public class TweeterListFragment extends Fragment implements
 	}
 
 	@Override
-	public void onConnectedToTwitterComplete(
-			ArrayList<ArrayList<HashMap<String, String>>> allUserTweetsMap) {
-		// TODO Auto-generated method stub
-
-		/* store user names */
-
-		/*
-		 * cheap fix.//TODO for some reason we have to go back to the first
-		 * fragment before notifying we deleted the entire list otherwise
-		 * fragmentStatePageradapter leaves the fragments it loaded in memory in
-		 * tack ?????
-		 */
-		if (mUsernamesList.isEmpty()) {
-			goToPage(0);
-		}
-		mTweetersObj_map = allUserTweetsMap;
-		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
-
-		mSectionsPagerAdapter.notifyDataSetChanged();
-	}
-
-	@Override
 	public void changePage(int index) {
-		goToPage(index);
+		//goToPage(index);
+		mCurrentPage = index;
 	}
 
 	@Override
@@ -667,28 +383,6 @@ public class TweeterListFragment extends Fragment implements
 		reStartLoader();
 	}
 
-	@Override
-	public void removeItem(String name){
-		
-		if(name.equals("*"))
-			/*delete everything*/
-		{
-		 mUsernamesList.clear();
-		 mTweetersObj_map.clear();
-		}
-		else
-		{
-		int index=mUsernamesList.indexOf(name);
-		mTweetersObj_map.remove(index);
-		mUsernamesList.remove(name);
-		}
-		
-		setupTitles((String[]) mUsernamesList.toArray(new String[0]));
-				mSectionsPagerAdapter.notifyDataSetChanged();
-		
-		
-	}
-	
 	@Override
 	public void requestMultiColumn(boolean multiColumnChoice) {
 		this.setMultipleColumns(multiColumnChoice);

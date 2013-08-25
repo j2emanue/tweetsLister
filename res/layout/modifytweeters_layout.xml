@@ -57,6 +57,7 @@
         android:layout_height="wrap_content"
         android:divider="@color/light_font"
         android:dividerHeight="1.0sp"
+        android:fastScrollEnabled="true"
         android:drawSelectorOnTop="false"
         android:headerDividersEnabled="true"
         tools:listitem="@layout/tweeter_list_row_item" />

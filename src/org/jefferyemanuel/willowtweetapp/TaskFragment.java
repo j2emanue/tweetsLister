@@ -64,14 +64,20 @@ public class TaskFragment extends Fragment {
 		super.onAttach(activity);
 		printLog(Consts.TAG,
 				"calling TaskFraments onAttach:" + activity.getTaskId());
-		try {
+		/*try {
 			mCallbacks = (TaskCallbacks) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement TaskCallBacks Listener");
-		}
+		}*/
 	}
 
+	
+	public void setTaskListener(TaskCallbacks callback){
+		mCallbacks=callback;
+		
+	}
+	
 	/**
 	 * This method will only be called once when the retained Fragment is first
 	 * created.
@@ -202,6 +208,14 @@ public class TaskFragment extends Fragment {
 				 * save all user specific info into an array ofhashmap object
 				 * called tweeterInfo.
 				 */
+				
+				if(tweeter.equalsIgnoreCase(""))
+				{
+					
+					printLog(Consts.TAG,
+					"cancelling doInBackground from TaskFragment as empty tweeter");
+					continue;	
+				}
 				tweeterInfo = new ArrayList<HashMap<String, String>>();
 
 				try {
@@ -300,7 +314,7 @@ public class TaskFragment extends Fragment {
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 			int progress = values[0];
-			if (mCallbacks != null)
+			if (mCallbacks != null && getActivity()!=null)
 				mCallbacks.onProgressUpdate(progress);
 		}
 
@@ -308,7 +322,7 @@ public class TaskFragment extends Fragment {
 		protected void onCancelled() {
 			printLog(Consts.TAG, "calling onCancelled of taskFragment");
 			running = false;
-			if (mCallbacks != null) {
+			if (mCallbacks != null && getActivity()!=null) {
 				mCallbacks.onCancelled();
 			}
 
@@ -319,7 +333,7 @@ public class TaskFragment extends Fragment {
 				ArrayList<ArrayList<HashMap<String, String>>> result) {
 			//super.onPostExecute(result);
 
-			if (mCallbacks != null) {
+			if (mCallbacks != null && getActivity()!=null) {
 				mCallbacks.onPostExecute(result);
 
 			}

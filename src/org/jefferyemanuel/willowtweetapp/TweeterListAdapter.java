@@ -51,7 +51,7 @@ public class TweeterListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return mTweeterInfo.size();
+		return mTweeterInfo!=null? mTweeterInfo.size():0;
 	}
 
 	@Override

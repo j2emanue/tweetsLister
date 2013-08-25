@@ -15,7 +15,7 @@ public class Consts {
 	}
 
 	//developer and logging options
-	public static final boolean DEVELOPER_MODE =false; //TODO check for traceview if its on
+	public static final boolean DEVELOPER_MODE =true; //TODO check for traceview if its on
 	public static final String TAG = "willowtweet";
 	public static final String TAG_FRAGMENT = "fragments";
 
@@ -75,7 +75,7 @@ public class Consts {
 	public static final String HANDLER_SHOW_DIALOG = "showdialog";
 	public static final String HANDLER_HIDE_DIALOG = "hidedialog";
 	public static final String HANDLER_REMOVE_TASK = "removetask";
-	public static final String HANDLER_BEGIN_TASK = "starttask";
+	public static final String HANDLER_UPDATE_PAGER_ADAPTER = "starttask";
 	//configuration constants
 	public static final int NUMBER_OF_STATUSES = 20;
 
@@ -97,4 +97,6 @@ public class Consts {
 	//orientation Change keys
 	public static final String SAVED_INSTANCE_TWEETERS="data";
 	public static final String SAVED_INSTANCE_POSITION="current_position";
+public static final String SAVED_INSTANCE_EDIT_MODE="editing_mode";
+
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jefferyemanuel.listeners.ModifyListListener;
 import org.jefferyemanuel.listeners.TweeterSelectedListener;
 
 import android.annotation.TargetApi;
@@ -40,8 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class ModifyTweetersFragment extends Fragment implements
-		OnClickListener, ModifyListListener,
-		LoaderManager.LoaderCallbacks<Cursor> {
+		OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 	SoundPool mSoundPool;
 	boolean sound_loaded;
@@ -194,24 +192,9 @@ public class ModifyTweetersFragment extends Fragment implements
 					createToast(getActivity(),
 							getString(R.string.warning_item_deleted));
 
-				sendRequestForItemDeletion(username);
-
 				return true;
 			}
 		});
-
-	}
-
-	public void sendRequestForItemDeletion(String username) {
-
-		mTweeterSelectedCallback.requestItemDeletion(username);
-		mDataAdapter.getCursor().requery();
-		mDataAdapter.notifyDataSetChanged();
-		/*
-		 * printLog(Consts.TAG, "restarting loader");
-		 * getActivity().getSupportLoaderManager().restartLoader(
-		 * Consts.LOADER_ID, null, this);
-		 */
 
 	}
 
@@ -234,7 +217,6 @@ public class ModifyTweetersFragment extends Fragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		// TODO Auto-generated method stub
 
 		return new CursorLoader(getActivity(), Consts.CONTENT_URI, null, null,
 				null, Consts.COLUMN_USER + " COLLATE NOCASE ASC");
@@ -266,6 +248,7 @@ public class ModifyTweetersFragment extends Fragment implements
 
 		switch (v.getId()) {
 
+		/*user has clicked the add button to add multiple users to DB*/
 		case R.id.btn_add_newuser:
 			EditText userName = (EditText) this.getView().findViewById(
 					R.id.et_additional_username);
@@ -276,39 +259,53 @@ public class ModifyTweetersFragment extends Fragment implements
 				break;
 			}
 
-			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 			/* clear white spaces and @ from user names after entered */
 			userName.setText(userName.getText().toString()
 					.replaceAll("\\s", "").replace("@", ""));
 
 			List<String> userNamesBulkList = Arrays.asList(userName.getText()
 					.toString().split("\\s*,\\s*"));
-			for (String user : userNamesBulkList) {
-				operations.add(ContentProviderOperation
-						.newInsert(Consts.CONTENT_URI)
-						.withValue(Consts.COLUMN_USER, user.toString())
-						.withYieldAllowed(true).build());
-			}
 
-			try {
-				getActivity().getContentResolver().applyBatch(Consts.AUTHORITY,
-						operations);
-				userName.setText("");
-			} catch (RemoteException e) {
-			} catch (OperationApplicationException e) {
-				createToast(getActivity(), "Failed to Add item(s)");
-				if (Consts.DEVELOPER_MODE)
-					printLog(Consts.TAG, e.toString());
-			}
+			addBulkData(userNamesBulkList);
+
+			userName.setText("");
 
 			break;
 		}
 	}
 
-	@Override
-	public void deleteAllItems() {
-		sendRequestForItemDeletion("*");
+	/*
+	 * does heavy work by adding a large list of twitter account names to a
+	 * database by performing a BULK insert this task is performed on a seperate
+	 * thread involved immediately after runnable is defined.
+	 * @parameter : a list of user names as strings
+	 */
+	private void addBulkData(final List<String> userNamesBulkList) {
+		Runnable mUpdateBulkTask = new Runnable() {
+			public void run() {
 
+				ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+				for (String user : userNamesBulkList) {
+					operations.add(ContentProviderOperation
+							.newInsert(Consts.CONTENT_URI)
+							.withValue(Consts.COLUMN_USER, user.toString())
+							.withYieldAllowed(true).build());
+				}
+
+				try {
+					getActivity().getContentResolver().applyBatch(
+							Consts.AUTHORITY, operations);
+
+				} catch (RemoteException e) {
+				} catch (OperationApplicationException e) {
+					createToast(getActivity(), "Failed to Add item(s)");
+					if (Consts.DEVELOPER_MODE)
+						printLog(Consts.TAG, e.toString());
+				}
+
+			}
+		};
+
+		new Thread(mUpdateBulkTask).start();
 	}
-
 }

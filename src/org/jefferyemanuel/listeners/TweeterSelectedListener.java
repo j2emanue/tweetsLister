@@ -10,5 +10,6 @@ public interface TweeterSelectedListener {
      */
 	
 	void requestListItem(String tweeterName);
-	void requestItemDeletion(String name);
-}
+/*	void requestItemDeletion(String name);
+*/
+	}

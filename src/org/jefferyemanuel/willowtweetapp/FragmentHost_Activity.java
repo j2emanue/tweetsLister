@@ -6,21 +6,18 @@ import static org.jefferyemanuel.willowtweetapp.Utils.printLog;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.jefferyemanuel.listeners.ModifyListListener;
-import org.jefferyemanuel.listeners.TaskCallbacks;
 import org.jefferyemanuel.listeners.TweeterListObserver;
 import org.jefferyemanuel.listeners.TweeterSelectedListener;
 
-import android.database.Cursor;
+import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
 
 /* Host activity for all fragments.  in onCreate we check if we are in two pane or single and attach fragments accordingly
  * this optimises tablet layouts.  on a two pane mode both modify list and tweeter list are shown on the same screen
@@ -34,20 +31,24 @@ import android.view.ViewGroup;
  * trying to get all tweeters at the same time. This can especially work since we are using a 
  * FragmentStatePagerAdapter which loads 3 fragments into memory at once.  Also,when user deletes from the list only, 
  * there should not be a network call, just delete the item and notify the adapter of data set changed
+ 
+ *UPDATE: FINALLY MADE THE DESIGN WHERE EACH LIST FRAGMENT INSIDE OF THE VIEWPAGER LOADS ITS OWN TASKFRAGMENT AND THUS
+ *ASYNCHTASK TO RETRIEVE THE DATA FROM TWITTER.  THIS IS HIGHLY EFFICIENTLY NETWORK CALLS AND SPAWN ONLY WHEN USER REQUIRES
+ *THE VIEW
  */
 
 public class FragmentHost_Activity extends FragmentActivity implements
 
-TaskCallbacks, TweeterSelectedListener {
+ TweeterSelectedListener {
 
 	private TweeterListObserver mFragmentListCallback;
-	private ModifyListListener mFragmentModifyListCallback;
 	private FragmentManager fm;
 	private ViewGroup mModiftyTweetersLayout, mTweetslistLayout;
 	private boolean isEditing, isFromSavedState, mMultiColumn;
 	private ArrayList<ArrayList<HashMap<String, String>>> tweeters;
 	private int restoredIndex = 0;
-
+	public static DiskLruImageCache imageDiskCache;
+	
 	/* make any fragment method calls after the fragments have been resumed */
 	@Override
 	protected void onResumeFragments() {
@@ -78,12 +79,28 @@ TaskCallbacks, TweeterSelectedListener {
 		printLog(Consts.TAG, "onCreate: savedInstanceState "
 				+ (savedInstanceState == null ? "==" : "!=") + " null");
 
+		// This has to be called before setContentView and you must use the 
+		// class in android.support.v4.view and NOT android.view
+
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		
 		setContentView(R.layout.activity_main);
 
 		/*
 		 * if(Consts.DEVELOPER_MODE) Debug.startMethodTracing();
 		 */
 		fm = getSupportFragmentManager();
+	
+		if(Consts.DEVELOPER_MODE)
+			FragmentManager.enableDebugLogging(true);
+		
+		
+		/* CREATE OUR DISK CACHE TO STORE IMAGES */
+		if (Utils.isExternalStorageAvailable())
+			imageDiskCache = new DiskLruImageCache(this, "diskcache",
+					Consts.DISK_CACHE_SIZE, CompressFormat.PNG,
+					Consts.COMPRESS_QUALITY);
+		
 		// Restore state
 
 		if (savedInstanceState != null) {
@@ -95,19 +112,15 @@ TaskCallbacks, TweeterSelectedListener {
 			mFragmentListCallback = (TweeterListFragment) fm
 					.findFragmentByTag(TweeterListFragment.class.getName());
 
-			mFragmentModifyListCallback = (ModifyListListener) fm
-					.findFragmentByTag(ModifyTweetersFragment.class.getName());
-
-			/* on orientation change restore the data */
+				/* on orientation change restore the data */
 			tweeters = (ArrayList<ArrayList<HashMap<String, String>>>) savedInstanceState
 					.getSerializable(Consts.SAVED_INSTANCE_TWEETERS);
 			restoredIndex = savedInstanceState
 					.getInt(Consts.SAVED_INSTANCE_POSITION);
 
-			isEditing = savedInstanceState.getBoolean("editing_mode");
-			if (tweeters != null)
-				((TweeterListObserver) mFragmentListCallback)
-						.onConnectedToTwitterComplete(tweeters);
+			isEditing = savedInstanceState.getBoolean(Consts.SAVED_INSTANCE_EDIT_MODE);
+			
+			
 		}
 		//If this is the first creation of the activity, add fragments to it
 		else {
@@ -129,8 +142,7 @@ TaskCallbacks, TweeterSelectedListener {
 				fragmentTransaction.replace(mModiftyTweetersLayout.getId(),
 						modifyTweetersFragment,
 						ModifyTweetersFragment.class.getName());
-				mFragmentModifyListCallback = (ModifyListListener) modifyTweetersFragment;
-
+				
 				// Commit the transaction
 				fragmentTransaction.commit();
 			}
@@ -167,7 +179,7 @@ TaskCallbacks, TweeterSelectedListener {
 		 * tweeters instead of making another inefficient network call
 		 */
 		state.putSerializable(Consts.SAVED_INSTANCE_TWEETERS, tweeters);
-		state.putBoolean("editing_mode", isEditing);
+		state.putBoolean(Consts.SAVED_INSTANCE_EDIT_MODE, isEditing);
 		/*
 		 * get the current page from the tweetlist fragment and save it
 		 * onConfiguration change
@@ -225,8 +237,6 @@ TaskCallbacks, TweeterSelectedListener {
 			 */
 			ModifyTweetersFragment frag = new ModifyTweetersFragment();
 
-			mFragmentModifyListCallback = (ModifyListListener) frag;
-
 			ft.add(R.id.activity_tweetslist_container, frag,
 					ModifyTweetersFragment.class.getName());
 			ft.addToBackStack(null);//adding to the backstack allows us to revert the last transaction and thus return to tweeter list afterwards
@@ -281,10 +291,10 @@ TaskCallbacks, TweeterSelectedListener {
 		 * on returning to the tweeter list fragment, if the taskfragment exist
 		 * it means there is a network call occuring, show the proress dialoag
 		 */
-		Fragment taskfragment = fm.findFragmentByTag(TaskFragment.class
+		/*Fragment taskfragment = fm.findFragmentByTag(TaskFragment.class
 				.getName());
 		if (taskfragment != null)
-			showProgressDialog(getString(R.string.notification_loading_items));
+			showProgressDialog(getString(R.string.notification_loading_items));*/
 	}
 
 	public void createWarningDialog(String msg) {
@@ -294,43 +304,7 @@ TaskCallbacks, TweeterSelectedListener {
 		dialogfragment.show(fm, "dialog2");
 	}
 
-	private void showProgressDialog(String msg) {
 
-		dismissProgressDialog();
-		ProgressDialogFragment dialog = ProgressDialogFragment.newInstance(msg);
-		dialog.setCancelable(true);
-		dialog.show(fm, "dialog");
-	}
-
-	private void dismissProgressDialog() {
-		Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-		if (prev != null && prev.getActivity() != null) {
-			DialogFragment df = (DialogFragment) prev;
-			try {
-				df.dismiss();
-			} catch (IllegalStateException e) {
-				// TODO: handle exception
-			}
-		}
-	}
-
-	/* locates our fragment via tag and updates the progress bar */
-	private void updateProgressDialog(int value) {
-
-		if (value == Consts.ERROR_CODE_RATE_LIMIT_EXCEEDED) {
-			createWarningDialog(getString(R.string.warning_max_apiCalls_Reached));
-		}
-
-		else {
-			ProgressDialogFragment theCurrentDialog = (ProgressDialogFragment) getSupportFragmentManager()
-					.findFragmentByTag("dialog");
-			if (theCurrentDialog != null) {
-				theCurrentDialog.setProgressOfDialog(value);
-			}
-
-		}
-
-	}
 
 	/*
 	 * called from the actionbar when user wants to wipe the entire list of
@@ -348,73 +322,10 @@ TaskCallbacks, TweeterSelectedListener {
 				null);
 		if (numrows > 0)
 			createToast(this, getString(R.string.warning_item_deleted));
-
-		/*
-		 * the content provider is set to only notify observers when the
-		 * deletion of rows is greater then 1 thus we need to manually delete
-		 * the content if only a single item is being deleted. This was done to
-		 * help delete an a single item without making a network call
-		 */
-		if (tweeters.size() <= 1) {
-			/*
-			 * check if the modify list fragment exist and if so it will handle
-			 * to delete all items else we let the viewpage list do it
-			 */
-
-			tweeters.clear();
-			Fragment modifyfragment = fm
-					.findFragmentByTag(ModifyTweetersFragment.class.getName());
-
-			if (modifyfragment != null)
-				mFragmentModifyListCallback.deleteAllItems();
-			else
-				mFragmentListCallback.removeItem("*");
-		}
+		
 	}
 
-	@Override
-	public void onPreExecute() {
-		Fragment modifyfragment = fm
-				.findFragmentByTag(ModifyTweetersFragment.class.getName());
-		/* dont show the progress if we are not on the viewpager screen */
-		if (isTwoPane() || modifyfragment == null || !modifyfragment.isAdded())
-			showProgressDialog(getString(R.string.notification_loading_items));
-	}
-
-	@Override
-	public void onProgressUpdate(int value) {
-		printLog(Consts.TAG, "calling onprogressUpdate");
-		updateProgressDialog(value);
-	}
-
-	@Override
-	public void onCancelled() {
-		printLog(Consts.TAG, "calling onCancelled");
-		dismissProgressDialog();
-	}
-
-	@Override
-	public void onPostExecute(
-			ArrayList<ArrayList<HashMap<String, String>>> result) {
-
-		dismissProgressDialog();
-
-		printLog(Consts.TAG, "calling onPostExecute from MainActivity:"
-				+ result.size() + " items");
-
-		/*
-		 * all done looping for one specific tweeter, lets save all that users
-		 * status's into our global map
-		 */
-		if (mFragmentListCallback != null) {
-			mFragmentListCallback.onConnectedToTwitterComplete(result);
-			tweeters = result;
-		}
-
-		if (result.size() <= 0)
-			createToast(this, getString(R.string.warning_no_data_collected));
-	}
-
+	
 	@Override
 	public void requestListItem(String tweeterName) {
 
@@ -431,10 +342,5 @@ TaskCallbacks, TweeterSelectedListener {
 
 	}
 
-	@Override
-	public void requestItemDeletion(String name) {
-
-		mFragmentListCallback.removeItem(name);
-	}
-
+	
 }

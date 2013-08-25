@@ -60,7 +60,6 @@ public class TweeterListFragment extends Fragment implements
 	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private static NumberFormat nf;
 	private ArrayList<String> mUsernamesList;
-	private boolean fromSavedState = false;
 	private boolean mMultipleColumns;
 	private int mCurrentPage;
 
@@ -155,7 +154,6 @@ public class TweeterListFragment extends Fragment implements
 			LoaderManager.enableDebugLogging(true);
 
 		if (savedInstanceState != null) {
-			fromSavedState = true;
 			mUsernamesList = (ArrayList<String>) savedInstanceState
 					.getSerializable("userlist");
 		}
@@ -356,7 +354,14 @@ public class TweeterListFragment extends Fragment implements
 		 * asynchTask to contact Twitter.com for feeds
 		 */
 		if (mUsernamesList.isEmpty()) {
-			setupTitles((String[]) mUsernamesList.toArray(new String[0]));
+			/*
+			 * all items have been removed, lets show our blank list view we set
+			 * the current item to zero to have the view pager disgard
+			 * everything else except the current fragment from memory- quick
+			 * fix
+			 */
+			mViewPager.setCurrentItem(0);
+			setupTitles(new String[] { "" });
 			mSectionsPagerAdapter.notifyDataSetChanged();
 		}
 

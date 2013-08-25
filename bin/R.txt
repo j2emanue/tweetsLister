@@ -36,8 +36,8 @@ int drawable spinning_loader 0x7f02000c
 int drawable stickmanpointing 0x7f02000d
 int id action_settings 0x7f0c001e
 int id activity_main_root_container 0x7f0c0000
-int id activity_modifytweeters_container 0x7f0c0001
-int id activity_tweetslist_container 0x7f0c0002
+int id activity_modifytweeters_container 0x7f0c0002
+int id activity_tweetslist_container 0x7f0c0001
 int id adView_one 0x7f0c0014
 int id adView_three 0x7f0c000d
 int id adView_two 0x7f0c0017

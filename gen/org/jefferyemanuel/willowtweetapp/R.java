@@ -63,8 +63,8 @@ public final class R {
     public static final class id {
         public static final int action_settings=0x7f0c001e;
         public static final int activity_main_root_container=0x7f0c0000;
-        public static final int activity_modifytweeters_container=0x7f0c0001;
-        public static final int activity_tweetslist_container=0x7f0c0002;
+        public static final int activity_modifytweeters_container=0x7f0c0002;
+        public static final int activity_tweetslist_container=0x7f0c0001;
         public static final int adView_one=0x7f0c0014;
         public static final int adView_three=0x7f0c000d;
         public static final int adView_two=0x7f0c0017;
